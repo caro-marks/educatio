@@ -1,0 +1,23 @@
+{% extends 'escolas/homepage.html' %}
+
+{% block content %}
+
+
+<form action="{% url 'escolas:alunos' %}" method="get">
+    <label for="escola">Escola:</label>
+    <select name="escola" id="escola">
+        <option value="">--</option>
+        {% for escola in escolas %}
+        <option value="{{ escola.id }}">{{ escola.nome }}</option>
+        {% endfor %}
+    </select>
+    <button type="submit">Filtrar</button>
+</form>
+<h1>Lista de Alunos</h1>
+<h2>{% if nome_escola %}{{ nome_escola }}{% endif %}</h2>
+<ul>
+        {% for aluno in alunos %}
+            <li>{{ aluno.nome }}</li>
+        {% endfor %}
+    </ul>
+{% endblock %}

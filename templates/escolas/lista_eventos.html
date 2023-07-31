@@ -1,0 +1,21 @@
+{% extends 'escolas/homepage.html' %}
+
+{% block content %}
+    
+    <form action="{% url 'escolas:eventos' %}" method="get">
+        {% csrf_token %}
+        <label for="data_inicio">Data de Início:</label>
+        <input type="date" id="data_inicio" name="data_inicio" value="{{ request.GET.data_inicio|default:'' }}">
+        
+        <label for="data_fim">Data de Fim:</label>
+        <input type="date" id="data_fim" name="data_fim" value="{{ request.GET.data_fim|default:'' }}">
+        
+        <button type="submit">Filtrar</button>
+    </form>
+    <h1>Lista de Eventos</h1>
+    <ul>
+        {% for evento in eventos %}
+            <li>{{ evento.descricao }}</li>
+        {% endfor %}
+    </ul>
+{% endblock %}

@@ -1,0 +1,12 @@
+{% extends 'escolas/homepage.html' %}
+
+{% block content %}    
+    <h1>Detalhes do Aluno</h1>
+    <h2>{{ aluno.nome }}</h2>
+    <p><strong>Endereço:</strong> {{ aluno.endereco }}</p>
+    <p><strong>Bairro:</strong> {{ aluno.bairro }}</p>
+    <p><strong>Cidade:</strong> {{ aluno.cidade }}</p>
+    <p><strong>Estado:</strong> {{ aluno.estado }}</p>
+    <p><strong>Nascimento:</strong> {{ aluno.data_nascimento }}</p>
+    <p><strong>Escola:</strong> {{ aluno.escola }}</p>
+{% endblock %}

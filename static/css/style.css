@@ -1,0 +1,11 @@
+:root {
+    --color-darker: #425679;
+    --color-dark: #80A4CB;
+    --color-base: #79ACD9;
+    --color-light: #9CB6CF;
+    --color-lighter: #D5E5F2;
+}
+
+body {
+    background-color: var(--color-light);
+}

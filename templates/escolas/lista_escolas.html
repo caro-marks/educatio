@@ -1,0 +1,30 @@
+{% extends 'escolas/homepage.html' %}
+
+{% block content %}
+    <h1>Escolas ativas</h1>
+    <ul class="list-unstyled py-2">
+        {% for escola in escolas %}
+            <li class="d-flex flex-md-row flex-column align-items-center justify-content-between my-2 p-2 border-bottom rounded" style="background-color: var(--color-lighter)">
+                <div class="d-flex flex-row align-items-center">                    
+                    <i class="fas fa-school pr-2"></i>
+                    <div class="d-flex flex-column">                        
+                        <h3>
+                            {{ escola.nome }}
+                        </h3>
+                        <div class="d-flex flex-row justify-content-between">
+                            <h5>
+                                {{ escola.diretor}}
+                            </h5>
+                            alunos ativos:
+                        </div>
+                    </div>
+                </div>
+                <h5 class="border border-dark p-1 mt-2 mt-md-0 rounded">
+                    <a class="text-decoration-none" href="{% url 'escolas:escola' escola.id %}" style="color: var(--color-darker);">
+                        Detalhes
+                    </a>
+                </h5>
+            </li>
+        {% endfor %}
+    </ul>
+{% endblock %}
