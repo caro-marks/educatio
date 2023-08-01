@@ -9,6 +9,7 @@ from .views import (
     ListaEscolasView,
     ListaEventosView,
     # ListaTiposEventoView,
+    ListaNotasEventoView,
 
     # detalhe
     DetalheAlunoView,
@@ -38,4 +39,8 @@ urlpatterns = [
     # # tipo evento
     # path('tipos_evento/', ListaTiposEventoView.as_view(), name='tipos_evento'),
     # path('tipo_evento/<int:pk>/', DetalheTipoEventoView.as_view(), name='tipo_evento')
+
+    # nota evento
+    path('notas_evento/', ListaNotasEventoView.as_view(), name='notas_evento'),
+    # path('nota_evento/<int:pk>/', DetalheTipoEventoView.as_view(), name='tipo_evento')
 ]

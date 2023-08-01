@@ -66,7 +66,6 @@ class TipoEvento(models.Model):
 class Evento(models.Model):
     descricao = models.CharField(max_length=100)
     data = models.DateField(blank=True, null=True)
-    # data_final = models.DateField(blank=True, null=True)
     escola = models.ForeignKey(Escola, on_delete=models.CASCADE, related_name='eventos')
     tipo_evento = models.ForeignKey(TipoEvento, on_delete=models.CASCADE)
 

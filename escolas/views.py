@@ -1,5 +1,6 @@
 from django.views.generic import ListView, DetailView, TemplateView
 from .models import Escola, Aluno, Evento, TipoEvento, NotaEvento
+from .forms import FiltroForm
 
 # Create your views here.
 
@@ -50,9 +51,8 @@ class ListaEventosView(ListView):
         queryset = super().get_queryset()
         data_inicio = self.request.GET.get('data_inicio')
         data_fim = self.request.GET.get('data_fim')
-        print(f'data_inicio: {data_inicio}')
-        print(f'data_fim: {data_fim}')
-
+        # if not data_inicio or not data_fim:
+        #     queryset = queryset.none()
         if data_inicio and data_fim:
             # Realize a filtragem dos eventos com base nas datas selecionadas
             queryset = queryset.filter(data__range=[data_inicio, data_fim])
@@ -80,3 +80,71 @@ class DetalheEventoView(DetailView):
 #     model = TipoEvento
 #     template_name = 'escolas/detalhe_tipo_evento.html'
 #     context_object_name = 'tipo_evento'
+
+class ListaNotasEventoView(ListView):
+    model = NotaEvento
+    template_name = 'escolas/lista_notas_evento.html'
+    context_object_name = 'notas_evento'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        form = FiltroForm(self.request.GET)
+        context['form'] = form
+        escola_id = self.request.GET.get('escola')
+        evento_id = self.request.GET.get('evento')
+        data_inicio = self.request.GET.get('data_inicio')
+        data_fim = self.request.GET.get('data_fim')
+
+        if escola_id:
+            notas_evento = NotaEvento.objects.filter(evento__escola_id=escola_id)
+            if evento_id:
+                notas_evento = notas_evento.filter(evento_id=evento_id)
+        else:
+            notas_evento = NotaEvento.objects.all()
+        
+        if data_inicio:
+            notas_evento = notas_evento.filter(evento__data__gte=data_inicio)
+        if data_fim:
+            notas_evento = notas_evento.filter(evento__data__gte=data_fim)
+
+        medias = self.get_medias(notas_evento=notas_evento)
+
+        context['medias'] = medias
+        return context
+    
+    def get_medias(self, notas_evento):
+        medias = []
+        alunos = [nota_evento.aluno for nota_evento in notas_evento]
+        print(f'alunos: {alunos}')
+        for aluno in list(set(alunos)):
+            print(f'aluno: {aluno}')
+            notas_eventos = notas_evento.filter(aluno=aluno)
+            print(f'notas_eventos: {notas_eventos}')
+            total_pesos = 0
+            soma_produtos = 0
+
+            for nota_evento in notas_eventos:
+                tipo_evento = nota_evento.evento.tipo_evento
+                peso_evento = tipo_evento.peso
+                nota_aluno = nota_evento.nota
+
+                total_pesos += peso_evento
+                soma_produtos += nota_aluno * peso_evento
+
+            if total_pesos != 0:
+                media_ponderada = soma_produtos / total_pesos
+            else:
+                media_ponderada = 0
+            
+            medias.append(
+                {
+                    'aluno': aluno.nome,
+                    'media': round(media_ponderada, 2)
+                }
+            )
+        return medias
+
+class DetalheNotaEventoView(DetailView):
+    model = NotaEvento
+    template_name = 'escolas/detalhe_nota_evento.html'
+    context_object_name = 'nota_evento'

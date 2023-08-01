@@ -1,0 +1,54 @@
+{% extends 'escolas/homepage.html' %}
+
+{% block content %}
+    {% load crispy_forms_tags %}
+    
+    <form action="{% url 'escolas:notas_evento' %}" method="get">
+        {% csrf_token %}
+        {{ form|crispy }}
+        
+        <button type="submit">Filtrar</button>
+    </form>
+
+    <h3>Lista de Notas por Evento</h1>
+    {% if medias %}
+        <table border="1">
+            <tr>
+                <th>Aluno</th>
+                <th>Nota</th>
+            </tr>
+            {% for media in medias %}
+                <tr>
+                    <td>{{ media.aluno }}</td>
+                    <td>{{ media.media }}</td>
+                </tr>
+            {% endfor %}
+        </table>
+
+    {% else %}
+        <p>Nenhum item encontrado.</p>
+    {% endif %}
+{% endblock %}
+
+<!-- <script>
+    const escolaSelect = document.getElementById('id_escola');
+    const eventoSelect = document.getElementById('id_evento');
+
+    escolaSelect.addEventListener('change', function() {
+        const escolaId = this.value;
+
+        eventoSelect.innerHTML = '';
+
+        if (escolaId) {
+            const eventos = JSON.parse('{{ eventos | safe }}');
+            for (const evento of eventos) {
+                if (evento.escola === escolaId) {
+                    const option = document.createElement('option');
+                    option.value = evento.id;
+                    option.textContent = evento.descricao;
+                    eventoSelect.appendChild(option);
+                }
+            }
+        }
+    });
+</script> -->
