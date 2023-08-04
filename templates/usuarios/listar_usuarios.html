@@ -1,0 +1,12 @@
+{% extends 'escolas/homepage.html' %}
+
+{% block content %}
+  <a href="{% url 'escolas:criar_usuario' %}" class="btn btn-secondary">Criar Novo Usuario</a>
+  <br>
+
+  <ul>
+    {% for usuario in usuarios %}
+        <li> {{ usuario.username }} </li>
+    {% endfor %}
+  </ul>
+{% endblock %}

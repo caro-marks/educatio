@@ -1,0 +1,58 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Educatio</title>
+
+    <!-- CSS files -->
+    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
+    <link rel="stylesheet" href="{% static 'fa/css/all.min.css' %}">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+
+</head>
+<body class="d-flex align-items-center flex-column m-2" style="min-height: 95vh;">
+    <nav class="navbar navbar-expand-md navbar-light" style="max-height: 10vh; width: 90vw;">
+        <div class="container-fluid d-flex justify-content-center align-items-center">
+            <a class="navbar-brand d-none d-md-block" style="max-width: 50%;" href="{% url 'escolas:homepage' %}">
+                <img src="{% static 'imgs/logo.svg' %}" alt="Logo"  style="max-width: 60%;">
+            </a>
+            <ul class="nav navbar-item">
+                {% if request.user.is_authenticated %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'escolas:escolas' %}">Escolas</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{% url 'logout' %}" class="nav-link">
+                            Sair
+                        </a>
+                    </li>
+                {% else %}
+                    <li class="nav-item">
+                        <a href="{% url 'login' %}" class="nav-link">
+                            Entrar
+                        </a>
+                    </li>
+                {% endif %}
+            </ul>
+        </div>
+        
+    </nav>
+    <div class="container mt-5">
+        {% block content %}{% endblock %}
+    </div>
+
+    <!-- JS scripts -->
+    <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+    <script src="{% static 'js/bootstrap.min.js' %}"></script>
+    <script src="{% static 'js/script.js' %}"></script>
+    <!-- <footer>
+        <h5>Criado para o Projeto Viver.</h5>
+    </footer> -->
+    
+</body>
+</html>

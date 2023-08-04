@@ -1,8 +1,41 @@
-{% extends 'escolas/homepage.html' %}
+{% extends 'homepage.html' %}
 
 {% block content %}
-    <h1>Escolas ativas</h1>
-    <ul class="list-unstyled py-2">
+    <div class="d-flex flex-row justify-content-between">
+        <h1>
+            Escolas
+        </h1>
+        <a role="button" class="btn btn-secondary" href="{% url 'escolas:cria_escola' %}">
+            Nova
+        </a>
+    </div>
+    
+    <table id="escolas" class="table table-striped table-bordered table-hover" style="width:100%">
+        <thead>            
+            <tr>
+                <th>Escola</th>
+                <th>Diretor</th>
+                <th>Ações</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for escola in escolas %}
+            <tr>
+                <td>{{ escola.nome }}</td>
+                <td>{{ escola.diretor }}</td>
+                <td>
+                    <div class="btn-group" role="group" aria-label="Acoes">
+                        <a role="button" class="btn btn-secondary" href="{% url 'escolas:escola' escola.id %}">
+                            Detalhes
+                        </a>
+                    </div>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <!-- <ul class="list-unstyled py-2">
         {% for escola in escolas %}
             <li class="d-flex flex-md-row flex-column align-items-center justify-content-between my-2 p-2 border-bottom rounded" style="background-color: var(--color-lighter)">
                 <div class="d-flex flex-row align-items-center">                    
@@ -26,5 +59,6 @@
                 </h5>
             </li>
         {% endfor %}
-    </ul>
+    </ul> -->
+  
 {% endblock %}

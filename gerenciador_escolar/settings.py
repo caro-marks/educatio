@@ -80,9 +80,9 @@ WSGI_APPLICATION = 'gerenciador_escolar.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'gerenciador_escolar',
-        'USER': 'admin',
-        'PASSWORD': 'admin',
+        'NAME': 'gerenciador',
+        'USER': 'main_admin',
+        'PASSWORD': 'senha_secreta',
         'HOST': 'localhost',
         'PORT': '5432'
     }
@@ -134,6 +134,11 @@ STATICFILES_DIRS = [
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+AUTH_USER_MODEL = 'escolas.CustomUser'
+
+LOGOUT_REDIRECT_URL = 'login'
+LOGIN_REDIRECT_URL = 'escolas:homepage'
 
 CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap4"
 

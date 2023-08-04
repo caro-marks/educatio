@@ -1,6 +1,15 @@
 from django.db import models
+from django.contrib.auth.models import AbstractUser
+from .enums import Parentesco, EstadosCivis, PeriodoEscola, SerieEscolar
 
 # Create your models here.
+
+class CustomUser(AbstractUser):
+    ativo = models.BooleanField(default=True)
+
+    class Meta:
+        swappable = 'AUTH_USER_MODEL'
+
 
 class Escola(models.Model):
     nome = models.CharField(max_length=100)
@@ -10,21 +19,30 @@ class Escola(models.Model):
     cep = models.CharField(max_length=8)
     cidade = models.CharField(max_length=40)
     estado = models.CharField(max_length=2)
-    complemento = models.CharField(max_length=50, null=True)
+    complemento = models.CharField(max_length=50, null=True, blank=True)
     diretor = models.CharField(max_length=50)
+    ativo = models.BooleanField(default=True)
+    criado_em = models.DateTimeField(auto_now_add=True)
+    atualizado_em = models.DateTimeField(auto_now=True)
+    operador = models.ForeignKey(CustomUser, null=True, blank=True, on_delete=models.CASCADE)
 
     def __str__(self):
         return self.nome
     
-# PARENTESCO = (
-#     'pai', 'PAI',
-#     'mae', 'MAE',
-#     'irm', 'IRMAOS',
-#     'avo', 'AVOS',
-#     'tio', 'TIOS',
-#     'pri', 'PRIMOS',
-#     'out', 'OUTROS'
-# )
+
+class Parente(models.Model):
+    nome = models.CharField(max_length=100)
+    grau_parentesco = models.CharField(max_length=3, choices=Parentesco.choices())
+    idade = models.PositiveSmallIntegerField(blank=True, null=True)
+    principal_responsavel = models.BooleanField(default=False)
+    info_adicionais = models.CharField(max_length=100, blank=True)
+    criado_em = models.DateTimeField(auto_now_add=True)
+    atualizado_em = models.DateTimeField(auto_now=True)
+    operador = models.ForeignKey(CustomUser, null=True, blank=True, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return f'{self.get_grau_parentesco_display()} {self.nome}'
+
 
 class Aluno(models.Model):
     nome = models.CharField(max_length=50)
@@ -34,21 +52,21 @@ class Aluno(models.Model):
     cep = models.CharField(max_length=8)
     cidade = models.CharField(max_length=40)
     estado = models.CharField(max_length=2)
-    complemento = models.CharField(max_length=50, null=True)
+    complemento = models.CharField(max_length=50, blank=True, null=True)
     data_nascimento = models.DateField()
-    # nome_mae = models.CharField(max_length=50)
-    # nome_pai = models.CharField(max_length=50)
-    # nome_responsavel = models.CharField(max_length=50)
-    # grau_de_parentesco = models.CharField(max_length=3, choices=PARENTESCO) // ENUM
-    # estado_civil_pais = models.CharField() // ENUM
-    # familia = models.CharField() // cadastrar nome, grau de parentesco, idade
-    escola = models.ForeignKey(Escola, on_delete=models.CASCADE, related_name='alunos')
-    # periodo = models.CharField() ENUM
-    # serie = models.CharField()
-    # cras = models.CharField() nulo ou id na rede socio assistencial
-    # vulnerabilidades = models.CharField()
-    # remedios = models.CharField() 
-    # informacoes_adicionais = models.CharField()
+    familia = models.ManyToManyField(Parente, blank=True)
+    estado_civil_pais = models.CharField(max_length=3, choices=EstadosCivis.choices())
+    cras = models.CharField(blank=True, null=True, max_length=30)
+    escola = models.ForeignKey(Escola, on_delete=models.CASCADE)
+    periodo = models.CharField(max_length=3, choices=PeriodoEscola.choices())
+    serie = models.CharField(max_length=3, choices=SerieEscolar.choices())
+    vulnerabilidades = models.CharField(max_length=100, blank=True)
+    remedios = models.CharField(max_length=100, blank=True) 
+    info_adicionais = models.CharField(max_length=100, blank=True)
+    ativo = models.BooleanField(default=True)
+    criado_em = models.DateTimeField(auto_now_add=True)
+    atualizado_em = models.DateTimeField(auto_now=True)
+    operador = models.ForeignKey(CustomUser, null=True, blank=True, on_delete=models.CASCADE)
 
     def __str__(self):
         return self.nome
@@ -66,7 +84,7 @@ class TipoEvento(models.Model):
 class Evento(models.Model):
     descricao = models.CharField(max_length=100)
     data = models.DateField(blank=True, null=True)
-    escola = models.ForeignKey(Escola, on_delete=models.CASCADE, related_name='eventos')
+    escola = models.ForeignKey(Escola, on_delete=models.CASCADE)
     tipo_evento = models.ForeignKey(TipoEvento, on_delete=models.CASCADE)
 
     def __str__(self):
@@ -78,6 +96,8 @@ class NotaEvento(models.Model):
     evento = models.ForeignKey(Evento, on_delete=models.CASCADE)
     nota = models.DecimalField(max_digits=5, decimal_places=2)
     # data_entrega = models.DateField()
+    criado_em = models.DateTimeField(auto_now_add=True)
+    operador = models.ForeignKey(CustomUser, null=True, blank=True, on_delete=models.CASCADE)
 
     def __str__(self):
         return f'{self.evento} - {self.aluno}'
