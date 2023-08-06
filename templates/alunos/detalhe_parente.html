@@ -1,0 +1,9 @@
+{% extends 'homepage.html' %}
+
+{% block content %}    
+    <h3 class="pb-2">Detalhes do Parente: {{ parente.nome }}</h3>
+    <p><strong>{{ parente.grau_parentesco }}</strong> de {{ aluno }}</p>
+    <p><strong>Idade:</strong> {{ parente.idade }}</p>
+    <p><strong>principal_responsavel:</strong> {{ parente.principal_responsavel }}</p>
+    <p><strong>info_adicionais:</strong> {{ parente.info_adicionais }}</p>
+{% endblock %}

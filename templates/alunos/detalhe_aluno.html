@@ -11,10 +11,7 @@
     <br>
     <div class="d-flex flex-row justify-content-between align-items-center">
         <h2>Parentes</h2>
-        <!-- <a role="button" class="btn btn-secondary" href="{% url 'escolas:cria_parente' %}">
-            Novo
-        </a> -->
-        <a href="" class="btn btn-secondary">
+        <a role="button" class="btn btn-secondary" href="{% url 'escolas:cria_parente' aluno.id %}">
             Novo
         </a>
     </div>
@@ -40,10 +37,7 @@
                     </td>
                     <td>
                         <div class="btn-group" role="group" aria-label="Acoes">
-                            <!-- <a role="button" class="btn btn-secondary" href="{% url 'escolas:parente' parente.id %}">
-                                Detalhes
-                            </a> -->
-                            <a role="button" class="btn btn-secondary" href="">
+                            <a role="button" class="btn btn-secondary" href="{% url 'escolas:parente' aluno.id parente.id %}">
                                 Detalhes
                             </a>
                         </div>

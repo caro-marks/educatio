@@ -6,7 +6,7 @@ from .forms import UsuarioForm, CriaEscolaForm, ListAlunosFilter, CriaAlunoForm,
 from django.contrib.auth.models import Group
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import render, redirect, get_object_or_404
-from django.urls import reverse
+from django.urls import reverse, reverse_lazy
     
 ### HOMEPAGE
 
@@ -132,24 +132,48 @@ class AlunoCreateView(LoginRequiredMixin, CreateView):
         form.instance.operador = self.request.user
         return super().form_valid(form)
 
+
+### Parente
+
 class ParenteCreateView(LoginRequiredMixin, CreateView):
     model = Parente
     form_class = CriaParenteForm
     template_name = 'alunos/cria_parente.html'
+
+    def get_context_data(self, **kwargs: Any) -> Dict[str, Any]:
+        context = super().get_context_data(**kwargs)
+        context['aluno_id'] = self.kwargs.get('aluno_id')
+        return context
     
     def get_success_url(self):
-        # Obter o ID do aluno criado
-        parente_id = self.object.pk
+        aluno_id = self.kwargs.get('aluno_id')
 
         # Gerar a URL de detalhes do aluno com o ID obtido
-        success_url = reverse('escolas:aluno', kwargs={'pk': parente_id})
+        success_url = reverse_lazy('escolas:aluno', kwargs={'pk': aluno_id})
         return success_url
 
     def form_valid(self, form):
         form.instance.operador = self.request.user
+        parente = form.save()
+        aluno = Aluno.objects.get(pk=self.kwargs.get('aluno_id'))
+        aluno.familia.add(parente)
+        aluno.save()
         return super().form_valid(form)
 
 
+class DetalheParenteView(LoginRequiredMixin, DetailView):
+    model = Parente
+    template_name = 'alunos/detalhe_parente.html'
+    context_object_name = 'parente'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        # Obtenha o ID do aluno da URL usando o query parameter "aluno"
+        aluno_id = self.kwargs.get('aluno_id')
+        aluno = Aluno.objects.get(pk=aluno_id)
+        context['aluno'] = aluno.nome
+
+        return context
 
 
 # ## Evento

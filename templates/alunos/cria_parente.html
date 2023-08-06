@@ -3,9 +3,9 @@
 {% block content %}  
 
     {% load crispy_forms_tags %}
-    <form action="{% url 'escolas:cria_parente' %}" method="post">
+    <form action="{% url 'escolas:cria_parente' aluno_id %}" method="post">
         {% csrf_token %}
-        {{ form_parente|crispy }} 
+        {{ form|crispy }}
         <button type="submit">Cadastrar Parente</button>
     </form>
 {% endblock %}
