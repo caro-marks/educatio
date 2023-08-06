@@ -1,0 +1,11 @@
+{% extends 'homepage.html' %}
+
+{% block content %}  
+
+    {% load crispy_forms_tags %}
+    <form action="{% url 'escolas:cria_parente' %}" method="post">
+        {% csrf_token %}
+        {{ form_parente|crispy }} 
+        <button type="submit">Cadastrar Parente</button>
+    </form>
+{% endblock %}

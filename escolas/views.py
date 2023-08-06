@@ -1,98 +1,156 @@
 import datetime
+from typing import Any, Dict
 from django.views.generic import ListView, DetailView, TemplateView, View, CreateView
-from .models import CustomUser, Escola, Aluno, Evento, TipoEvento, NotaEvento
-from .forms import UsuarioForm, CriaEscolaForm#, ListNotasEventoForm, ListAlunosForm, ListEventosForm
+from .models import CustomUser, Escola, Aluno, Evento, TipoEvento, NotaEvento, Parente
+from .forms import UsuarioForm, CriaEscolaForm, ListAlunosFilter, CriaAlunoForm, CriaParenteForm#, ListNotasEventoForm, , ListEventosForm
 from django.contrib.auth.models import Group
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import render, redirect, get_object_or_404
-
-class UsuariosView(LoginRequiredMixin, View):
-    model = CustomUser
-    template_name_listagem = 'usuarios/listar_usuarios.html'
-    template_name_criacao = 'usuarios/criar_usuario.html'
-
-    def get(self, request):
-        usuarios = self.model.objects.all()
-        return render(request, self.template_name_listagem, {'usuarios': usuarios})
+from django.urls import reverse
     
-    def post(self, request):
-        form = UsuarioForm(request.POST)
-        if form.is_valid():
-            novo_usuario = form.save()
-
-            custom_group = Group.objects.get(name='CustomGroup')
-            custom_group.user_set.add(novo_usuario)
-        
-            return redirect('listar_usuarios')
-        
-        return render(request, self.template_name_criacao, {'form': form})
-    
-## HOMEPAGE
+### HOMEPAGE
 
 class HomepageView(TemplateView):
     template_name = 'homepage.html'
 
 
-### ESCOLA
-class EscolasDetailView(DetailView):
+### USUARIOS
+
+class UsuariosDetailView(LoginRequiredMixin, DetailView):
+    model = CustomUser
+    template_name = 'usuarios/detalhe_usuario.html'
+    context_object_name = 'usuario'
+
+class UsuarioListView(LoginRequiredMixin, ListView):
+    model = CustomUser
+    template_name = 'usuarios/lista_usuarios.html'
+    context_object_name = 'usuarios'
+
+class UsuarioCreateView(LoginRequiredMixin, CreateView):
+    model = CustomUser
+    form_class = UsuarioForm
+    template_name = 'usuarios/cria_usuario.html'
+    success_url = '/usuarios/'
+
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        novo_usuario = form.instance
+
+        custom_group = Group.objects.get(name='Geral')
+        custom_group.user_set.add(novo_usuario)
+
+        return response
+
+
+### ESCOLAS
+
+class EscolasDetailView(LoginRequiredMixin, DetailView):
     model = Escola
     template_name = 'escolas/detalhe_escola.html'
     context_object_name = 'escola'
 
-class EscolasListView(ListView):
+class EscolasListView(LoginRequiredMixin, ListView):
     model = Escola
     template_name = 'escolas/lista_escolas.html'
     context_object_name = 'escolas'
 
-class EscolaCreateView(CreateView):
+class EscolaCreateView(LoginRequiredMixin, CreateView):
     model = Escola
     form_class = CriaEscolaForm
     template_name = 'escolas/cria_escola.html'
     success_url = '/escolas/'
 
+    def form_valid(self, form):
+        form.instance.operador = self.request.user
+        return super().form_valid(form)
 
-# class DetalheEscolaView(LoginRequiredMixin, DetailView):
-#     model = Escola
-#     template_name = 'escolas/detalhe_escola.html'
-#     context_object_name = 'escola'
 
-# ## Aluno
-# class ListaAlunosView(LoginRequiredMixin, ListView):
-#     model = Aluno
-#     template_name = 'escolas/lista_alunos.html'
-#     context_object_name = 'alunos'
-#     form_class = ListAlunosForm
+### Aluno
 
-#     def get_context_data(self, **kwargs):
-#         context = super().get_context_data(**kwargs)
-#         context['form'] = self.form_class(self.request.GET)
+class DetalheAlunoView(LoginRequiredMixin, DetailView):
+    model = Aluno
+    template_name = 'alunos/detalhe_aluno.html'
+    context_object_name = 'aluno'
 
-#         if escola_id := self.request.GET.get('escola'):
-#             context['alunos'] = self.model.objects.filter(escola__id=escola_id)
+class ListaAlunosView(LoginRequiredMixin, ListView):
+    model = Aluno
+    template_name = 'alunos/lista_alunos.html'
+    context_object_name = 'alunos'
+    form_class = ListAlunosFilter
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['form'] = self.form_class(self.request.GET)
+
+        if escola_id := self.request.GET.get('escola'):
+            context['alunos'] = self.model.objects.filter(escola__id=escola_id)
         
-#         alunos_info = []
-#         for aluno in context['alunos']:
-#             alunos_info.append(
-#                 {
-#                     'id': aluno.id,
-#                     'nome': aluno.nome,
-#                     'idade': self.get_idade(aluno.data_nascimento),
-#                 })
+        alunos_info = []
+        for aluno in context['alunos']:
+            alunos_info.append(
+                {
+                    'id': aluno.id,
+                    'nome': aluno.nome,
+                    'idade': self.get_idade(aluno.data_nascimento),
+                })
         
-#         context['alunos_info'] = alunos_info
-#         return context
+        context['alunos_info'] = alunos_info
+        return context
     
-#     def get_idade(self, data_nascimento):
-#         data_atual = datetime.date.today()
+    def get_idade(self, data_nascimento):
+        data_atual = datetime.date.today()
 
-#         idade = data_atual.year - data_nascimento.year - ((data_atual.month, data_atual.day) < (data_nascimento.month, data_nascimento.day))
+        idade = data_atual.year - data_nascimento.year - ((data_atual.month, data_atual.day) < (data_nascimento.month, data_nascimento.day))
 
-#         return idade
+        return idade
 
-# class DetalheAlunoView(LoginRequiredMixin, DetailView):
-#     model = Aluno
-#     template_name = 'escolas/detalhe_aluno.html'
-#     context_object_name = 'aluno'
+class AlunoCreateView(LoginRequiredMixin, CreateView):
+    model = Aluno
+    form_class = CriaAlunoForm
+    template_name = 'alunos/cria_aluno.html'
+
+    def get_initial(self):
+        initial = super().get_initial()
+        if escola_param := self.request.GET.get('escola', None):
+            initial['escola'] = escola_param
+        return initial
+    
+    def get_success_url(self):
+        # Obter o ID do aluno criado
+        aluno_id = self.object.pk
+
+        # Gerar a URL de detalhes do aluno com o ID obtido
+        success_url = reverse('escolas:aluno', kwargs={'pk': aluno_id})
+        return success_url
+
+    # def get_context_data(self, **kwargs):
+    #     context = super().get_context_data(**kwargs)
+    #     context['form_parente'] = CriaParenteForm()
+    #     return context
+
+    def form_valid(self, form):
+        form.instance.operador = self.request.user
+        return super().form_valid(form)
+
+class ParenteCreateView(LoginRequiredMixin, CreateView):
+    model = Parente
+    form_class = CriaParenteForm
+    template_name = 'alunos/cria_parente.html'
+    
+    def get_success_url(self):
+        # Obter o ID do aluno criado
+        parente_id = self.object.pk
+
+        # Gerar a URL de detalhes do aluno com o ID obtido
+        success_url = reverse('escolas:aluno', kwargs={'pk': parente_id})
+        return success_url
+
+    def form_valid(self, form):
+        form.instance.operador = self.request.user
+        return super().form_valid(form)
+
+
+
 
 # ## Evento
 # class ListaEventosView(LoginRequiredMixin, ListView):

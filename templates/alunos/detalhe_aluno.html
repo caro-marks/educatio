@@ -1,12 +1,55 @@
-{% extends 'escolas/homepage.html' %}
+{% extends 'homepage.html' %}
 
 {% block content %}    
-    <h1>Detalhes do Aluno</h1>
-    <h2>{{ aluno.nome }}</h2>
+    <h1>Detalhes do Aluno: {{ aluno.nome }}</h1>
     <p><strong>Endereço:</strong> {{ aluno.endereco }}</p>
     <p><strong>Bairro:</strong> {{ aluno.bairro }}</p>
     <p><strong>Cidade:</strong> {{ aluno.cidade }}</p>
     <p><strong>Estado:</strong> {{ aluno.estado }}</p>
     <p><strong>Nascimento:</strong> {{ aluno.data_nascimento }}</p>
     <p><strong>Escola:</strong> {{ aluno.escola }}</p>
+    <br>
+    <div class="d-flex flex-row justify-content-between align-items-center">
+        <h2>Parentes</h2>
+        <!-- <a role="button" class="btn btn-secondary" href="{% url 'escolas:cria_parente' %}">
+            Novo
+        </a> -->
+        <a href="" class="btn btn-secondary">
+            Novo
+        </a>
+    </div>
+    <table id="aluno" class="table table-striped table-bordered table-hover" style="width:100%">
+        <thead>
+            <tr>
+                <th>Nome</th>
+                <th>Grau de Parentesco</th>
+                <th>Info</th>
+                <th>Ações</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for parente in aluno.familia.all %}
+                <tr>
+                    <td>{{ parente.nome }}</td>
+                    <td>{{ parente.grau_parentesco }}</td>
+                    <td>
+                        {% if parente.principal_responsavel %}
+                            Principal Responsavel; 
+                        {% endif %}
+                        {{ parente.info_adicionais }}
+                    </td>
+                    <td>
+                        <div class="btn-group" role="group" aria-label="Acoes">
+                            <!-- <a role="button" class="btn btn-secondary" href="{% url 'escolas:parente' parente.id %}">
+                                Detalhes
+                            </a> -->
+                            <a role="button" class="btn btn-secondary" href="">
+                                Detalhes
+                            </a>
+                        </div>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
 {% endblock %}

@@ -1,0 +1,11 @@
+{% extends 'homepage.html' %}
+
+{% block content %}
+    {% load crispy_forms_tags %}
+    <!-- Formulário para criar novo usuário -->
+    <form action="{% url 'escolas:cria_usuario' %}" method="post">
+        {% csrf_token %}
+        {{ form|crispy }}
+        <button type="submit">Criar Novo Usuário</button>
+    </form>
+{% endblock %}

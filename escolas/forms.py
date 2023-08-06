@@ -1,5 +1,5 @@
 from django import forms
-from .models import CustomUser, Escola, Evento
+from .models import CustomUser, Escola, Evento, Aluno, Parente
 # from crispy_forms.helper import FormHelper
 # from crispy_forms.layout import Layout, Submit, Row, Column
 
@@ -11,44 +11,42 @@ class UsuarioForm(forms.ModelForm):
         widgets = {
             'password': forms.PasswordInput()
         }
+
+    def save(self, commit=True):
+        user = super().save(commit=False)
+        password = self.cleaned_data["password"]
+        user.set_password(password)
+        if commit:
+            user.save()
+        return user
+
     
-    def __init__(self, *args, **kwargs):
-        self.fields['is_superuser'].widget = forms.HiddenInput()
-        self.fields['is_staff'].widget = forms.HiddenInput()
+    # def __init__(self, *args, **kwargs):
+    #     self.fields['is_superuser'].widget = forms.HiddenInput()
+    #     self.fields['is_staff'].widget = forms.HiddenInput()
 
 class CriaEscolaForm(forms.ModelForm):
     class Meta:
         model = Escola
-        fields = '__all__' 
+        exclude = ['operador']
 
+class CriaAlunoForm(forms.ModelForm):
+    class Meta:
+        model = Aluno
+        exclude = ['operador', 'familia']
 
-# class ListAlunosForm(forms.Form):
-#     escola = forms.ChoiceField(choices=[('', '--')] + [(escola.id, escola.nome) for escola in Escola.objects.all()], required=False)
+class ListAlunosFilter(forms.Form):
+    escola = forms.ChoiceField(choices=[('', '--')] + [(escola.id, escola.nome) for escola in Escola.objects.all()], required=False)
 
+class CriaParenteForm(forms.ModelForm):
+    class Meta:
+        model = Parente
+        exclude = ['operador']
+    
 
 # class ListEventosForm(forms.Form):
 #     data_inicio = forms.DateField(label='De', required=False, widget=forms.DateInput(attrs={'type': 'date'}))
 #     data_fim = forms.DateField(label='Até', required=False, widget=forms.DateInput(attrs={'type': 'date'}))
-
-#     # def __init__(self, *args, **kwargs):
-#     #     super(ListEventosForm, self).__init__(*args, **kwargs)
-#     #     self.helper = FormHelper()
-#     #     # self.helper.form_method = 'get'
-#     #     # self.helper.form_class = 'form-horizontal'
-#     #     # self.helper.label_class = 'col-lg-2'
-#     #     # self.helper.field_class = 'col-lg-8'
-#     #     self.helper.layout = Layout(
-#     #         Row(
-#     #             Column(
-#     #                 'data_inicio', css_class='col-sm-6'
-#     #             ),
-#     #             Column(
-#     #                 'data_fim',
-#     #                 css_class='col-sm-6'
-#     #             )
-#     #         ),
-#     #         Submit('submit', 'Filtrar', css_class='btn-primary')
-#     #     )
 
 
 # class ListNotasEventoForm(forms.Form):

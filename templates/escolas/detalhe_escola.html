@@ -1,12 +1,13 @@
 {% extends 'homepage.html' %}
 
 {% block content %}    
-  <h3 class="pb-2">Detalhes da Escola</h3>
-  <h2 class="pb-3">{{ escola.nome }}</h2>
-  <p><strong>CNPJ:</strong> {{ escola.cnpj }}</p>
-  <p><strong>Endereço:</strong> {{ escola.endereco }}</p>
-  <p><strong>Bairro:</strong> {{ escola.bairro }}</p>
-  <p><strong>Cidade:</strong> {{ escola.cidade }}</p>
-  <p><strong>Estado:</strong> {{ escola.estado }}</p>
-  <p><strong>Diretor:</strong> {{ escola.diretor }}</p>
+    <h3 class="pb-2">Detalhes da Escola</h3>
+    <h2 class="pb-3">{{ escola.nome }}</h2>
+    <p><strong>CNPJ:</strong> {{ escola.cnpj }}</p>
+    <p><strong>Endereço:</strong> {{ escola.endereco }}</p>
+    <p><strong>Bairro:</strong> {{ escola.bairro }}</p>
+    <p><strong>CEP:</strong> {{ escola.cep }}</p>
+    <p><strong>Cidade:</strong> {{ escola.cidade }}</p>
+    <p><strong>Estado:</strong> {{ escola.estado }}</p>
+    <p><strong>Diretor:</strong> {{ escola.diretor }}</p>
 {% endblock %}

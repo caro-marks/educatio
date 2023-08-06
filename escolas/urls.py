@@ -5,7 +5,9 @@ from .views import (
     HomepageView,
 
     # usuarios
-    UsuariosView,
+    UsuarioCreateView,
+    UsuariosDetailView,
+    UsuarioListView,
 
     # escolas
     EscolaCreateView,
@@ -13,8 +15,11 @@ from .views import (
     EscolasListView,
 
     # alunos
-    # DetalheAlunoView,
-    # ListaAlunosView,
+    DetalheAlunoView,
+    ListaAlunosView,
+    AlunoCreateView,
+    # # parente
+    ParenteCreateView,
 
     # eventos
     # DetalheEventoView,
@@ -29,21 +34,26 @@ from .views import (
 app_name = 'escolas'
 
 urlpatterns = [
-    # users
-    path('usuarios/', UsuariosView.as_view(), name='usuarios'),
-    path('usuario/novo/', UsuariosView.as_view(), name='cria_usuario'),
-
     # homepage
     path('', HomepageView.as_view(), name='homepage'),
+
+    # users
+    path('usuarios/', UsuarioListView.as_view(), name='usuarios'),
+    path('usuario/novo/', UsuarioCreateView.as_view(), name='cria_usuario'),
+    path('usuario/<int:pk>/', UsuariosDetailView.as_view(), name='usuario'),
 
     # escola
     path('escolas/', EscolasListView.as_view(), name='escolas'),
     path('escola/nova/', EscolaCreateView.as_view(), name='cria_escola'),
     path('escola/<int:pk>/', EscolasDetailView.as_view(), name='escola'),
 
-    # # aluno
-    # path('alunos/', ListaAlunosView.as_view(), name='alunos'),
-    # path('aluno/<int:pk>/', DetalheAlunoView.as_view(), name='aluno'),
+    # aluno
+    path('alunos/', ListaAlunosView.as_view(), name='alunos'),
+    path('aluno/novo/', AlunoCreateView.as_view(), name='cria_aluno'),
+    path('aluno/<int:pk>/', DetalheAlunoView.as_view(), name='aluno'),
+
+    # parente
+    path('parente/novo/', ParenteCreateView.as_view(), name='cria_parente'),
 
     # # evento
     # path('eventos/', ListaEventosView.as_view(), name='eventos'),
@@ -58,18 +68,11 @@ urlpatterns = [
     # # path('nota_evento/<int:pk>/', DetalheTipoEventoView.as_view(), name='tipo_evento')
 ]
 
-                # <li class="nav-item">
-                #     <a class="nav-link" href="{% url 'escolas:alunos' %}">Alunos</a>
-                # </li>
+                
                 # <li class="nav-item">
                 #     <a class="nav-link" href="{% url 'escolas:eventos' %}">Eventos</a>
                 # </li>
                 # <li class="nav-item">
                 #     <a class="nav-link" href="{% url 'escolas:notas_evento' %}">Relatórios</a>
                 # </li>
-
-
-                
-                        # <a role="button" class="btn btn-secondary" href="{% url 'escolas:alunos' %}?escola={{ escola.id|urlencode }}">
-                        #     Alunos
-                        # </a>
+                        
