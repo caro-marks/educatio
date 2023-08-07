@@ -2,10 +2,9 @@ import datetime
 from typing import Any, Dict
 from django.views.generic import ListView, DetailView, TemplateView, View, CreateView
 from .models import CustomUser, Escola, Aluno, Evento, TipoEvento, NotaEvento, Parente
-from .forms import UsuarioForm, CriaEscolaForm, ListAlunosFilter, CriaAlunoForm, CriaParenteForm#, ListNotasEventoForm, , ListEventosForm
+from .forms import UsuarioForm, CriaEscolaForm, ListAlunosFilter, CriaAlunoForm, CriaParenteForm, ListEventosFilter, CriaEventoForm, CriaTipoEvento#, ListNotasEventoFilter
 from django.contrib.auth.models import Group
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse, reverse_lazy
     
 ### HOMEPAGE
@@ -81,6 +80,9 @@ class ListaAlunosView(LoginRequiredMixin, ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['form'] = self.form_class(self.request.GET)
+        context['alunos'] = self.model.objects.filter(
+            ativo=True
+        )
 
         if escola_id := self.request.GET.get('escola'):
             context['alunos'] = self.model.objects.filter(escola__id=escola_id)
@@ -116,17 +118,9 @@ class AlunoCreateView(LoginRequiredMixin, CreateView):
         return initial
     
     def get_success_url(self):
-        # Obter o ID do aluno criado
         aluno_id = self.object.pk
-
-        # Gerar a URL de detalhes do aluno com o ID obtido
         success_url = reverse('escolas:aluno', kwargs={'pk': aluno_id})
         return success_url
-
-    # def get_context_data(self, **kwargs):
-    #     context = super().get_context_data(**kwargs)
-    #     context['form_parente'] = CriaParenteForm()
-    #     return context
 
     def form_valid(self, form):
         form.instance.operador = self.request.user
@@ -147,8 +141,6 @@ class ParenteCreateView(LoginRequiredMixin, CreateView):
     
     def get_success_url(self):
         aluno_id = self.kwargs.get('aluno_id')
-
-        # Gerar a URL de detalhes do aluno com o ID obtido
         success_url = reverse_lazy('escolas:aluno', kwargs={'pk': aluno_id})
         return success_url
 
@@ -168,7 +160,6 @@ class DetalheParenteView(LoginRequiredMixin, DetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        # Obtenha o ID do aluno da URL usando o query parameter "aluno"
         aluno_id = self.kwargs.get('aluno_id')
         aluno = Aluno.objects.get(pk=aluno_id)
         context['aluno'] = aluno.nome
@@ -176,31 +167,63 @@ class DetalheParenteView(LoginRequiredMixin, DetailView):
         return context
 
 
-# ## Evento
-# class ListaEventosView(LoginRequiredMixin, ListView):
-#     model = Evento
-#     template_name = 'escolas/lista_eventos.html'
-#     context_object_name = 'eventos'
-#     form_class = ListEventosForm
+### Evento
+class ListaEventosView(LoginRequiredMixin, ListView):
+    model = Evento
+    template_name = 'eventos/lista_eventos.html'
+    context_object_name = 'eventos'
+    form_class = ListEventosFilter
 
-#     def get_context_data(self, **kwargs):
-#         context = super().get_context_data(**kwargs)
-#         form = self.form_class(self.request.GET)
-#         context['form'] = form
+    def get_context_data(self, **kwargs: Any) -> Dict[str, Any]:
+        context = super().get_context_data(**kwargs)
+        context['form'] = self.form_class(self.request.GET)
+
+        if escola_id := self.request.GET.get('escola'):
+            context['eventos'] = self.model.objects.filter(escola__id=escola_id)
         
-#         return context
+        return context
 
-#     def get_queryset(self):
-#         queryset = super().get_queryset()
-#         form = self.form_class(self.request.GET)
-#         if form.is_valid():
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        form = self.form_class(self.request.GET)
+        if form.is_valid():
             
-#             if data_inicio := form.cleaned_data.get('data_inicio'):
-#                 queryset = queryset.filter(data__gte=data_inicio)
-#             if data_fim := form.cleaned_data.get('data_fim'):
-#                 queryset = queryset.filter(data__lte=data_fim)
+            if data_inicio := form.cleaned_data.get('data_inicio'):
+                queryset = queryset.filter(data__gte=data_inicio)
+            if data_fim := form.cleaned_data.get('data_fim'):
+                queryset = queryset.filter(data__lte=data_fim)
             
-#         return queryset
+        return queryset
+
+class CriaEventoView(LoginRequiredMixin, CreateView):
+    model = Evento
+    template_name = 'eventos/cria_evento.html'
+    form_class = CriaEventoForm
+    
+    def get_success_url(self):
+        evento_id = self.object.pk
+        escola = self.model.objects.get(pk=evento_id).escola
+        url = reverse('escolas:eventos')
+        success_url = f'{url}?escola={escola.id}'
+        return success_url
+
+    def get_initial(self):
+        initial = super().get_initial()
+        if escola_param := self.request.GET.get('escola', None):
+            initial['escola'] = escola_param
+        return initial
+
+    def get_context_data(self, **kwargs: Any) -> Dict[str, Any]:
+        context =  super().get_context_data(**kwargs)
+        context['form_tipo_evento'] = CriaTipoEvento(self.request.POST)
+
+        return context
+
+class CriaTipoEventoView(LoginRequiredMixin, CreateView):
+    model = TipoEvento
+    template_name = 'eventos/cria_tipo_evento.html'
+    form_class = CriaTipoEvento
+    success_url = '/evento/novo/'
 
 # class DetalheEventoView(LoginRequiredMixin, DetailView):
 #     model = Evento

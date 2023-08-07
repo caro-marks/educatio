@@ -20,11 +20,13 @@ from .views import (
     AlunoCreateView,
     # # parente
     ParenteCreateView,
-    DetalheParenteView
+    DetalheParenteView,
 
     # eventos
     # DetalheEventoView,
-    # ListaEventosView,
+    ListaEventosView,
+    CriaEventoView,
+    CriaTipoEventoView,
     # # DetalheTipoEventoView
     # ListaTiposEventoView,
 
@@ -55,10 +57,12 @@ urlpatterns = [
 
     # parente
     path('aluno/<int:aluno_id>/parente/novo/', ParenteCreateView.as_view(), name='cria_parente'),
-    path('aluno/<int:aluno_id>/parente/<int:pk>/', DetalheParenteView.as_view(), name='parente')
+    path('aluno/<int:aluno_id>/parente/<int:pk>/', DetalheParenteView.as_view(), name='parente'),
 
     # # evento
-    # path('eventos/', ListaEventosView.as_view(), name='eventos'),
+    path('eventos/', ListaEventosView.as_view(), name='eventos'),
+    path('evento/novo/', CriaEventoView.as_view(), name='cria_evento'),
+    path('cria_tipo_evento/', CriaTipoEventoView.as_view(), name='cria_tipo_evento'),
     # path('evento/<int:pk>/', DetalheEventoView.as_view(), name='evento'),
 
     # # # tipo evento
@@ -71,9 +75,7 @@ urlpatterns = [
 ]
 
                 
-                # <li class="nav-item">
-                #     <a class="nav-link" href="{% url 'escolas:eventos' %}">Eventos</a>
-                # </li>
+                
                 # <li class="nav-item">
                 #     <a class="nav-link" href="{% url 'escolas:notas_evento' %}">Relatórios</a>
                 # </li>

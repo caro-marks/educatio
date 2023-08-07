@@ -1,0 +1,25 @@
+<form  action="{% url 'escolas:cria_tipo_evento' %}" method="post">
+    <div id="tipoEventoModal" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+
+        <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Cadastro de Tipo de Evento</h4>
+                </div>
+                <div class="modal-body">
+                    {%load crispy_forms_tags %} 
+                    {% csrf_token %}
+                
+                    {{ form_tipo_evento|crispy}}
+                </div>
+                <div class="modal-footer">
+                    <button type="submit">Cadastrar evento</button>
+                    <button class="btn btn-default" data-dismiss="modal">Cancelar</button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</form>
