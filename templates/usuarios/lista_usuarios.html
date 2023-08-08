@@ -1,11 +1,11 @@
 {% extends 'homepage.html' %}
 
 {% block content %}
-    <div class="d-flex flex-row justify-content-between">
+    <div class="d-flex flex-row justify-content-between align-items-center">
         <h1>
             Usuarios
         </h1>
-        <a class="btn btn-secondary" href="{% url 'escolas:cria_usuario' %}">
+        <a role="button" class="btn custom-button" href="{% url 'escolas:cria_usuario' %}">
             Novo
         </a>
     </div>
@@ -25,7 +25,7 @@
                 <td>{{ usuario.email }}</td>
                 <td>
                     <div class="btn-group" role="group" aria-label="Acoes">
-                        <a role="button" class="btn btn-secondary" href="{% url 'escolas:usuario' usuario.id %}">
+                        <a role="button" class="btn custom-button" href="{% url 'escolas:usuario' usuario.id %}">
                             Detalhes
                         </a>
                     </div>

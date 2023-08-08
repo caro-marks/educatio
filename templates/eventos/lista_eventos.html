@@ -2,21 +2,24 @@
 
 
 {% block content %}
-    {% if not request.GET.escola %}
-        {%load crispy_forms_tags %} 
-    
-        <form action="{% url 'escolas:eventos' %}" method="get">
-            {% csrf_token %}
-            {{ form|crispy }}
-            
-            <button type="submit">Filtrar</button>
-        </form>
-        <br>
-    {% endif %}
+    {% load crispy_forms_tags %}
+    <div>
+        <button class="btn btn-primary mt-3 mb-3" type="button" data-toggle="collapse" data-target="#filterForm" aria-expanded="false" aria-controls="filterForm">
+            Filtros
+        </button>
+        <div class="collapse" id="filterForm">
+            <form action="{% url 'escolas:eventos' %}" method="get"> 
+                {% csrf_token %}
+                {{ form|crispy }}
+                
+                <button class="filter-button" type="submit"">Filtrar</button>
+            </form>
+        </div>
+    </div>
     
     <div class="d-flex flex-row justify-content-between align-items-center">
         <h1>Lista de Eventos</h1>
-        <a role="button" class="btn btn-secondary" href="{% url 'escolas:cria_evento' %}?escola={{ request.GET.escola|urlencode }}">
+        <a role="button" class="btn custom-button" href="{% url 'escolas:cria_evento' %}?escola={{ request.GET.escola|urlencode }}">
             Novo
         </a>
     </div>
@@ -24,16 +27,33 @@
         <thead>            
             <tr>
                 <th>Descrição</th>
+                {% if not request.GET.escola %}
+                <th>Escola</th>
+                {% endif %}
                 <th>Data de Conclusão</th>
                 <th>Tipo</th>
+                <th>Ações</th>
             </tr>
         </thead>
         <tbody>
             {% for evento in eventos %}
             <tr>
                 <td>{{ evento.descricao }}</td>
+                {% if not request.GET.escola %}
+                <td>{{ evento.escola.nome }}</td>
+                {% endif %}
                 <td>{{ evento.data }}</td>
                 <td>{{ evento.tipo_evento }}</td>
+                <td>
+                    <div class="btn-group" role="group" aria-label="Acoes">
+                        <a role="button" class="btn custom-button" href="#">
+                            Dar Notas
+                        </a>
+                        <a role="button" class="btn custom-button" href="#">
+                            Resultados
+                        </a>
+                    </div>
+                </td>
             </tr>
             {% endfor %}
         </tbody>

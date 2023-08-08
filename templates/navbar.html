@@ -1,0 +1,67 @@
+{% load static %}
+<!-- Navbar -->
+<nav class="navbar navbar-expand-md fixed-top bg-light navbar-light">
+    <div class="container">
+        <a class="navbar-brand" href="{% url 'escolas:homepage' %}">
+            <img
+              id="educatio-logo"
+              src="{% static 'imgs/logo.svg' %}"
+              alt="educatio Logo"
+              draggable="false"
+              height="30"
+            />
+        </a>
+        <button
+            class="navbar-toggler"
+            type="button"
+            data-toggle="collapse"
+            data-target="#mainNavbar"
+            aria-controls="mainNavbar"
+            aria-expanded="false"
+            aria-label="Toggle navigation"
+        >
+            <i class="fas fa-bars"></i>
+        </button>
+        <div class="collapse navbar-collapse" id="mainNavbar">
+            <ul class="navbar-nav ms-auto align-items-center">
+                {% if request.user.is_authenticated %}
+                    {% if request.user.is_superuser %}
+                        <li class="nav-item ms-3">
+                            <a class="btn btn-black btn-rounded" href="{% url 'escolas:usuarios' %}">Usuários</a>
+                        </li>
+                    {% endif %}
+                    <li class="nav-item">
+                        <a class="nav-link mx-2" href="{% url 'escolas:escolas' %}"><i class="fas fa-school"></i>Escolas</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link mx-2" href="{% url 'escolas:alunos' %}"><i class="fas fa-graduation-cap"></i>Alunos</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link mx-2" href="{% url 'escolas:eventos' %}"><i class="fas fa-calendar"></i>Eventos</a>
+                    </li>
+                    <!-- <div class="dropdown nav-item">
+                        <a class="nav-link mx-2 dropdown-toggle" role="button" data-toggle="dropdown" aria-expanded="false" href="#">
+                            <i class="fas fa-clipboard"></i>
+                            Notas
+                        </a>
+                        <div class="dropdown-menu">
+                            <a class="dropdown-item" href="{% url 'escolas:notas_evento' %}">Por Evento</a>
+                            <a class="dropdown-item" href="{% url 'escolas:notas_evento' %}">Por Aluno</a>
+                            <a class="dropdown-item" href="{% url 'escolas:notas_evento' %}">Geral</a>
+                        </div>
+                    </div> -->
+                    <li class="nav-item">
+                        <a class="nav-link mx-2" href="{% url 'escolas:notas_evento' %}"><i class="fas fa-clipboard"></i>Notas</a>
+                    </li>
+                    <li class="nav-item ms-3">
+                        <a class="btn btn-blue btn-rounded" href="{% url 'logout' %}">Sair</a>
+                    </li>
+                {% else %}
+                    <li class="nav-item ms-3">
+                        <a class="btn btn-blue btn-rounded" href="{% url 'login' %}">Entrar</a>
+                    </li>
+                {% endif %}
+            </ul>
+        </div>
+  </div>
+</nav>

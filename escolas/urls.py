@@ -31,7 +31,8 @@ from .views import (
     # ListaTiposEventoView,
 
     # notas
-    # ListaNotasEventoView
+    ListaNotasEventoView,
+    ListaNotasAlunoView
 )
 
 app_name = 'escolas'
@@ -70,13 +71,8 @@ urlpatterns = [
     # # path('tipo_evento/<int:pk>/', DetalheTipoEventoView.as_view(), name='tipo_evento')
 
     # # nota evento
-    # path('notas_evento/', ListaNotasEventoView.as_view(), name='notas_evento'),
+    path('notas_evento/', ListaNotasEventoView.as_view(), name='notas_evento'),
+    path('notas_evento/<int:aluno_id>/', ListaNotasAlunoView.as_view(), name='notas_aluno')
     # # path('nota_evento/<int:pk>/', DetalheTipoEventoView.as_view(), name='tipo_evento')
 ]
-
-                
-                
-                # <li class="nav-item">
-                #     <a class="nav-link" href="{% url 'escolas:notas_evento' %}">Relatórios</a>
-                # </li>
                         

@@ -1,0 +1,23 @@
+{% extends 'homepage.html' %}
+
+{% block content %}
+
+    <h3>Lista de Notas por Evento de {{ aluno }}</h1>
+    {% if notas_evento %}
+        <table id="notas-eventos" class="table table-striped table-bordered" style="width:100%">
+            <tr>
+                <th>Evento</th>
+                <th>Nota</th>
+            </tr>
+            {% for nota_evento in notas_evento %}
+                <tr>
+                    <td>{{ nota_evento.evento }}</td>
+                    <td>{{ nota_evento.nota }}</td>
+                </tr>
+            {% endfor %}
+        </table>
+
+    {% else %}
+        <p>Nenhum item encontrado.</p>
+    {% endif %}
+{% endblock %}

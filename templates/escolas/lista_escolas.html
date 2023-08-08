@@ -5,7 +5,7 @@
         <h1>
             Escolas
         </h1>
-        <a role="button" class="btn btn-secondary" href="{% url 'escolas:cria_escola' %}">
+        <a role="button" class="btn custom-button" href="{% url 'escolas:cria_escola' %}">
             Nova
         </a>
     </div>
@@ -25,13 +25,13 @@
                 <td>{{ escola.diretor }}</td>
                 <td>
                     <div class="btn-group" role="group" aria-label="Acoes">
-                        <a role="button" class="btn btn-secondary" href="{% url 'escolas:escola' escola.id %}">
+                        <a role="button" class="btn custom-button" href="{% url 'escolas:escola' escola.id %}">
                             Detalhes
                         </a>
-                        <a role="button" class="btn btn-secondary" href="{% url 'escolas:alunos' %}?escola={{ escola.id|urlencode }}">
+                        <a role="button" class="btn custom-button" href="{% url 'escolas:alunos' %}?out=true&escola={{ escola.id|urlencode }}">
                             Alunos
                         </a>                        
-                        <a role="button" class="btn btn-secondary" href="{% url 'escolas:eventos' %}?escola={{ escola.id|urlencode }}">
+                        <a role="button" class="btn custom-button" href="{% url 'escolas:eventos' %}?escola={{ escola.id|urlencode }}">
                             Eventos
                         </a> 
                     </div>

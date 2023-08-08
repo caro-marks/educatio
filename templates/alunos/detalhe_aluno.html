@@ -11,7 +11,7 @@
     <br>
     <div class="d-flex flex-row justify-content-between align-items-center">
         <h2>Parentes</h2>
-        <a role="button" class="btn btn-secondary" href="{% url 'escolas:cria_parente' aluno.id %}">
+        <a role="button" class="btn custom-button" href="{% url 'escolas:cria_parente' aluno.id %}">
             Novo
         </a>
     </div>
@@ -28,7 +28,7 @@
             {% for parente in aluno.familia.all %}
                 <tr>
                     <td>{{ parente.nome }}</td>
-                    <td>{{ parente.grau_parentesco }}</td>
+                    <td>{{ parente.get_grau_parentesco_display }}</td>
                     <td>
                         {% if parente.principal_responsavel %}
                             Principal Responsavel; 
@@ -37,7 +37,7 @@
                     </td>
                     <td>
                         <div class="btn-group" role="group" aria-label="Acoes">
-                            <a role="button" class="btn btn-secondary" href="{% url 'escolas:parente' aluno.id parente.id %}">
+                            <a role="button" class="btn custom-button" href="{% url 'escolas:parente' aluno.id parente.id %}">
                                 Detalhes
                             </a>
                         </div>

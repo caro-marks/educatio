@@ -39,6 +39,9 @@ class Parente(models.Model):
     criado_em = models.DateTimeField(auto_now_add=True)
     atualizado_em = models.DateTimeField(auto_now=True)
     operador = models.ForeignKey(CustomUser, null=True, blank=True, on_delete=models.CASCADE)
+    
+    def get_grau_parentesco_display(self):
+        return dict(Parentesco.choices())[self.grau_parentesco]
 
     def __str__(self):
         return f'{self.get_grau_parentesco_display()} {self.nome}'

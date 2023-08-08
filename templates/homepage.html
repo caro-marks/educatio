@@ -14,45 +14,9 @@
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
 
 </head>
-<body class="d-flex align-items-center flex-column m-2" style="min-height: 95vh;">
-    <nav class="navbar navbar-expand-md navbar-light" style="max-height: 10vh; width: 90vw;">
-        <div class="container-fluid d-flex justify-content-center align-items-center">
-            <a class="navbar-brand d-none d-md-block" style="max-width: 50%;" href="{% url 'escolas:homepage' %}">
-                <img src="{% static 'imgs/logo.svg' %}" alt="Logo"  style="max-width: 60%;">
-            </a>
-            <ul class="nav navbar-item">
-                {% if request.user.is_authenticated %}
-                    {% if request.user.is_superuser %}
-                        <li class="nav-item">
-                            <a class="nav-link" href="{% url 'escolas:usuarios' %}">Usuarios</a>
-                        </li>
-                    {% endif %}
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'escolas:escolas' %}">Escolas</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'escolas:alunos' %}">Alunos</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'escolas:eventos' %}">Eventos</a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="{% url 'logout' %}" class="nav-link">
-                            Sair
-                        </a>
-                    </li>
-                {% else %}
-                    <li class="nav-item">
-                        <a href="{% url 'login' %}" class="nav-link">
-                            Entrar
-                        </a>
-                    </li>
-                {% endif %}
-            </ul>
-        </div>
-        
-    </nav>
-    <div class="container mt-5">
+<body class="d-flex align-items-center flex-column m-4" style="min-height: 90vh;">
+    {% include 'navbar.html' %}
+    <div class="container mt-5 pt-5">
         {% block content %}{% endblock %}
     </div>
 

@@ -6,6 +6,6 @@
     <form action="{% url 'escolas:cria_usuario' %}" method="post">
         {% csrf_token %}
         {{ form|crispy }}
-        <button type="submit">Criar Novo Usuário</button>
+        <button class="filter-button" type="submit"">Criar Novo Usuário</button>
     </form>
 {% endblock %}

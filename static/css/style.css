@@ -1,11 +1,95 @@
 :root {
-    --color-darker: #425679;
-    --color-dark: #80A4CB;
-    --color-base: #79ACD9;
-    --color-light: #9CB6CF;
-    --color-lighter: #D5E5F2;
+    --color-darker: #0067BA;
+    --color-dark: #0074CA;
+    --color-base: #147ED1;
+    --color-light: #3F9EE2;
+    --color-lighter: #69BFF5;
 }
 
 body {
-    background-color: var(--color-light);
+    background-color: var(--color-lighter);
+}
+
+/* CSS */
+.custom-button {
+    background-image: linear-gradient(var(--color-lighter), var(--color-light));
+    border: 1px solid var(--color-dark);
+    border-radius: 4px;
+    box-sizing: border-box;
+    color: var(--color-darker);
+    cursor: pointer;
+    direction: ltr;
+    display: block;
+    font-family: "SF Pro Text","SF Pro Icons","AOS Icons","Helvetica Neue",Helvetica,Arial,sans-serif;
+    font-size: 17px;
+    font-weight: 400;
+    letter-spacing: -.022em;
+    line-height: 1.47059;
+    min-width: 30px;
+    overflow: visible;
+    padding: 4px 15px;
+    text-align: center;
+    /* vertical-align: baseline; */
+    user-select: none;
+    -webkit-user-select: none;
+    touch-action: manipulation;
+    white-space: nowrap;
+}
+
+.custom-button:disabled {
+  cursor: default;
+  opacity: .3;
+}
+
+.custom-button:hover {
+  background-image: linear-gradient(var(--color-lighter), var(--color-base));
+  border-color: var(--color-dark);
+  text-decoration: none;
+}
+
+.custom-button:active {
+  background-image: linear-gradient(var(--color-light), var(--color-dark));
+  border-color: var(--color-darker);
+  outline: none;
+}
+
+.custom-button:focus {
+  box-shadow: rgba(105, 191, 245, 0.5) 0 0 0 3px;
+  outline: none;
+}
+
+
+* CSS */
+.filter-button {
+  background-color: var(--color-lighter);
+  border: 1px solid var(--color-lighter);
+  border-radius: 4px;
+  color: var(--color-darker);
+  cursor: pointer;
+  font-family: arial,sans-serif;
+  font-size: 14px;
+  height: 36px;
+  line-height: 27px;
+  min-width: 54px;
+  padding: 0 16px;
+  text-align: center;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+  white-space: pre;
+}
+
+.filter-button:hover {
+  border-color: var(--color-light);
+  box-shadow: rgba(0, 0, 0, .1) 0 1px 1px;
+  color: var(--color-darker);
+}
+
+.filter-button:focus {
+  border-color: var(--color-base);
+  outline: none;
+}
+
+.navbar-light .navbar-nav .nav-link {
+  color: var(--color-darker);
 }
