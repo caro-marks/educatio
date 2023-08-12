@@ -71,3 +71,6 @@ class ListNotasEventoOfAlunoFilter(forms.Form):
     data_inicio = forms.DateField(label='De', required=False, widget=forms.DateInput(attrs={'type': 'date'}))
     data_fim = forms.DateField(label='Até', required=False, widget=forms.DateInput(attrs={'type': 'date'}))
 
+class AvaliarEventoForm(forms.Form):
+    nota = forms.DecimalField(label='Nota', max_digits=5, decimal_places=2)
+

@@ -1,11 +1,12 @@
 import datetime
 from typing import Any, Dict
-from django.views.generic import ListView, DetailView, TemplateView, View, CreateView
+from django.views.generic import ListView, DetailView, TemplateView, View, CreateView, FormView
 from .models import CustomUser, Escola, Aluno, Evento, TipoEvento, NotaEvento, Parente
-from .forms import UsuarioForm, CriaEscolaForm, ListAlunosFilter, CriaAlunoForm, CriaParenteForm, ListEventosFilter, CriaEventoForm, CriaTipoEvento, ListNotasEventoFilter, ListNotasEventoOfAlunoFilter
+from .forms import UsuarioForm, CriaEscolaForm, ListAlunosFilter, CriaAlunoForm, CriaParenteForm, ListEventosFilter, CriaEventoForm, CriaTipoEvento, ListNotasEventoFilter, ListNotasEventoOfAlunoFilter, AvaliarEventoForm
 from django.contrib.auth.models import Group
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse, reverse_lazy
+from django.shortcuts import redirect
     
 ### HOMEPAGE
 
@@ -350,3 +351,38 @@ class ListaNotasAlunoView(LoginRequiredMixin, ListView):
 # #     model = NotaEvento
 # #     template_name = 'escolas/detalhe_nota_evento.html'
 # #     context_object_name = 'nota_evento'
+
+class AlunosSemNotasListView(ListView):
+    model = Aluno
+    template_name = 'notas/lista_alunos_sem_nota.html'
+    context_object_name = 'alunos_sem_notas'
+    # form_class = AvaliarEvento
+
+    def get_context_data(self, **kwargs: Any) -> Dict[str, Any]:
+        context = super().get_context_data(**kwargs)
+        evento_id = self.kwargs['evento_id']
+        context['evento'] = Evento.objects.get(pk=evento_id)
+        context['nota_form'] = AvaliarEventoForm()
+        return context
+
+    def get_queryset(self):
+        evento_id = self.kwargs['evento_id']
+        evento_escola = Evento.objects.get(id=evento_id).escola
+        alunos_com_notas = NotaEvento.objects.filter(evento_id=evento_id).values_list('aluno_id', flat=True)
+        alunos_sem_notas = Aluno.objects.filter(escola=evento_escola).exclude(id__in=alunos_com_notas)
+        return alunos_sem_notas
+
+class CriarNotaView(View):
+    def post(self, request, *args, **kwargs):
+        aluno_id = self.kwargs['aluno_id']
+        evento_id = self.kwargs['evento_id']
+        form = AvaliarEventoForm(request.POST)
+        
+        if form.is_valid():
+            nota = form.cleaned_data['nota']
+            NotaEvento.objects.create(aluno_id=aluno_id, evento_id=evento_id, nota=nota)
+        
+        redirect_url = reverse('escolas:alunos_sem_notas', kwargs={'evento_id': evento_id})
+        return redirect(redirect_url)
+    
+    

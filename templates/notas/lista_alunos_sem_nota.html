@@ -1,0 +1,33 @@
+{% extends 'homepage.html' %}
+
+
+{% block content %}
+
+    <h3>Alunos sem notas no evento {{ evento }}</h1>
+    {% if alunos_sem_notas %}
+        {% load crispy_forms_tags %}
+        <ul>
+            {% for aluno in alunos_sem_notas %}
+            <li class="d-flex flex-row">
+                <div class="col-4">{{ aluno.nome }}</p>
+                <form class="form-horizontal" action="{% url 'escolas:criar_nota_aluno' evento_id=evento.id aluno_id=aluno.id %}" method="post">
+                    {% csrf_token %}
+                    <div class="form-row align-items-center">
+                        <div class="col-auto">
+                            {{ nota_form.nota|as_crispy_field }}
+                        </div>
+                        <div class="col-auto">
+                            <button type="submit" class="filter-button">
+                                Avaliar
+                            </button>
+                        </div>
+                    </div>
+                </form>                
+            </li>
+            {% endfor %}
+        </ul>
+
+    {% else %}
+        <p>Nenhum item encontrado.</p>
+    {% endif %}
+{% endblock %}

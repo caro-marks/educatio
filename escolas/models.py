@@ -105,3 +105,19 @@ class NotaEvento(models.Model):
     def __str__(self):
         return f'{self.evento} - {self.aluno}'
 
+# class Escola(models.Model):
+#     nome = models.CharField(max_length=100)  
+
+# class Aluno(models.Model):
+#     nome = models.CharField(max_length=50)
+#     escola = models.ForeignKey(Escola, on_delete=models.CASCADE)
+
+# class Evento(models.Model):
+#     descricao = models.CharField(max_length=100)
+#     data = models.DateField(blank=True, null=True)
+#     escola = models.ForeignKey(Escola, on_delete=models.CASCADE)
+
+# class NotaEvento(models.Model):
+#     aluno = models.ForeignKey(Aluno, on_delete=models.CASCADE)
+#     evento = models.ForeignKey(Evento, on_delete=models.CASCADE)
+#     nota = models.DecimalField(max_digits=5, decimal_places=2)
