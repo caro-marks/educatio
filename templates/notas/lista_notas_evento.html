@@ -10,8 +10,9 @@
     
             <form action="{% url 'escolas:notas_evento' %}" method="get">
                 {% csrf_token %}
-                {{ form|crispy }}
+                <!-- {{ form|crispy }} -->
                 
+                {% crispy form %}
                 <button class="filter-button" type="submit"">Filtrar</button>
             </form>
         </div>
