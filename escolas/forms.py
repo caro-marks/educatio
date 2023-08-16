@@ -1,10 +1,13 @@
-from typing import Any, Mapping, Optional, Type, Union
+from typing import Any, Dict, Mapping, Optional, Type, Union
 from django import forms
+from django.core.files.base import File
+from django.db.models.base import Model
 from django.forms.utils import ErrorList
-from .models import CustomUser, Escola, Evento, Aluno, Parente, TipoEvento, NotaEvento
+from .enums import ESTADOS_BRASILEIROS
+from .models import CustomUser, Escola, Evento, Aluno, Parente, TipoEvento
 from django.forms.widgets import DateInput
 from crispy_forms.helper import FormHelper
-from crispy_forms.layout import Layout, Row, Column
+from crispy_forms.layout import Layout, Row, Column, ButtonHolder, Submit
 
 
 class UsuarioForm(forms.ModelForm):
@@ -23,10 +26,45 @@ class UsuarioForm(forms.ModelForm):
             user.save()
         return user
 
+
 class CriaEscolaForm(forms.ModelForm):
+
     class Meta:
         model = Escola
-        exclude = ['operador']
+        exclude = ['operador', 'ativo']
+        widgets = {
+            'complemento': forms.Textarea(attrs={'rows': 2}),
+            'estado': forms.Select(choices=ESTADOS_BRASILEIROS)
+        }
+    
+    def __init__(self, *args, **kwargs) -> None:
+        super().__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.layout = Layout(
+            Row(
+                Column('nome', css_class="col-md-8"),
+                Column('cnpj', css_class="col-md-4")
+            ),
+            Row(
+                Column('endereco', css_class="col-md-7"),
+                Column('bairro', css_class="col-md-5")
+            ),
+            Row(
+                Column('cep', css_class="col-md-2"),
+                Column('cidade', css_class="col-md-3"),
+                Column('estado', css_class="col-md-2"),               
+                Column('diretor')
+            ),
+            Row(
+                Column('complemento')
+            ),
+            Row(
+                ButtonHolder(
+                    Submit('submit', 'Cadastrar Escola', ),
+                ),
+                css_class="justify-content-md-end"
+            )
+        )
 
 class CriaAlunoForm(forms.ModelForm):
     class Meta:
@@ -86,13 +124,11 @@ class ListNotasEventoFilter(forms.Form):
                 Column('data_inicio', css_class='col-md-6'),
                 Column('data_fim', css_class='col-md-6'),
                 css_class='mt-3'
+            ),
+            ButtonHolder(
+                Submit('submit', 'Filtrar',)
             )
         )
-
-class ListNotasEventoOfAlunoFilter(forms.Form):
-    evento = forms.ChoiceField(choices=[('', '--')] + [(evento.id, evento.descricao) for evento in Evento.objects.all()], required=False)
-    data_inicio = forms.DateField(label='De', required=False, widget=forms.DateInput(attrs={'type': 'date'}))
-    data_fim = forms.DateField(label='Até', required=False, widget=forms.DateInput(attrs={'type': 'date'}))
 
 class AvaliarEventoForm(forms.Form):
     nota = forms.DecimalField(label='Nota', max_digits=5, decimal_places=2)

@@ -17,7 +17,9 @@
 <body class="d-flex align-items-center flex-column m-4" style="min-height: 90vh;">
     {% include 'navbar.html' %}
     <div class="container mt-5 pt-5">
-        {% block content %}{% endblock %}
+        <div class="d-flex justify-content-center align-items-center">
+            {% block content %}{% endblock %}
+        </div>
     </div>
 
     <!-- JS scripts -->

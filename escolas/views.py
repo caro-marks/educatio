@@ -1,16 +1,23 @@
-import datetime
+import datetime, csv
 from typing import Any, Dict
-from django.views.generic import ListView, DetailView, TemplateView, View, CreateView, FormView
+from django.db.models.query import QuerySet
+from django.views.generic import ListView, DetailView, TemplateView, View, CreateView
 from .models import CustomUser, Escola, Aluno, Evento, TipoEvento, NotaEvento, Parente
-from .forms import UsuarioForm, CriaEscolaForm, ListAlunosFilter, CriaAlunoForm, CriaParenteForm, ListEventosFilter, CriaEventoForm, CriaTipoEvento, ListNotasEventoFilter, ListNotasEventoOfAlunoFilter, AvaliarEventoForm
+from .forms import UsuarioForm, CriaEscolaForm, ListAlunosFilter, CriaAlunoForm, CriaParenteForm, ListEventosFilter, CriaEventoForm, CriaTipoEvento, ListNotasEventoFilter, AvaliarEventoForm
 from django.contrib.auth.models import Group
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse, reverse_lazy
 from django.shortcuts import redirect
+from django.http import HttpResponse
     
 ### HOMEPAGE
 
 class HomepageView(TemplateView):
+    """
+    Pagina inicial da aplicaçao. É protegida no frontend, mas nao esconde nada, alem de um navegador com links pra rotas protegidas pelo backend.
+
+    TODO: ver se é possível utilizar esta mesma view pra acrescentar dados relevantes sobre os objetos da aplicaçao, como quantidade de alunos ativos por escola, eventos sem avaliações, media mais alta na semana/mes, etc. Ps.: dados relevantes são subjetivos, e limitados pela estrutura do sistema.
+    """
     template_name = 'homepage.html'
 
 
@@ -43,18 +50,28 @@ class UsuarioCreateView(LoginRequiredMixin, CreateView):
 
 
 ### ESCOLAS
-
 class EscolasDetailView(LoginRequiredMixin, DetailView):
     model = Escola
     template_name = 'escolas/detalhe_escola.html'
     context_object_name = 'escola'
 
 class EscolasListView(LoginRequiredMixin, ListView):
+    """
+    Lista as escolas ativas
+    """
     model = Escola
     template_name = 'escolas/lista_escolas.html'
     context_object_name = 'escolas'
 
+    def get_queryset(self) -> QuerySet[Any]:
+        queryset = super().get_queryset().filter(ativo=True)
+        return queryset.order_by()
+
+    
 class EscolaCreateView(LoginRequiredMixin, CreateView):
+    """
+    Cria uma escola, e retorna pra lista de escolas
+    """
     model = Escola
     form_class = CriaEscolaForm
     template_name = 'escolas/cria_escola.html'
@@ -66,7 +83,6 @@ class EscolaCreateView(LoginRequiredMixin, CreateView):
 
 
 ### Aluno
-
 class DetalheAlunoView(LoginRequiredMixin, DetailView):
     model = Aluno
     template_name = 'alunos/detalhe_aluno.html'
@@ -129,7 +145,6 @@ class AlunoCreateView(LoginRequiredMixin, CreateView):
 
 
 ### Parente
-
 class ParenteCreateView(LoginRequiredMixin, CreateView):
     model = Parente
     form_class = CriaParenteForm
@@ -152,7 +167,6 @@ class ParenteCreateView(LoginRequiredMixin, CreateView):
         aluno.familia.add(parente)
         aluno.save()
         return super().form_valid(form)
-
 
 class DetalheParenteView(LoginRequiredMixin, DetailView):
     model = Parente
@@ -220,11 +234,6 @@ class CriaEventoView(LoginRequiredMixin, CreateView):
 
         return context
 
-# class DetalheEventoView(LoginRequiredMixin, DetailView):
-#     model = Evento
-#     template_name = 'escolas/detalhe_evento.html'
-#     context_object_name = 'evento'
-
 class CriaTipoEventoView(LoginRequiredMixin, CreateView):
     model = TipoEvento
     template_name = 'eventos/cria_tipo_evento.html'
@@ -238,21 +247,95 @@ class CriaTipoEventoView(LoginRequiredMixin, CreateView):
         success_url = f'{url}?escola={escola.id}'
         return success_url
 
-# # class ListaTiposEventoView(ListView):
-# #     model = TipoEvento
-# #     template_name = 'escolas/lista_tipos_evento.html'
-# #     context_object_name = 'tipos_evento'
-
-# # class DetalheTipoEventoView(DetailView):
-# #     model = TipoEvento
-# #     template_name = 'escolas/detalhe_tipo_evento.html'
-# #     context_object_name = 'tipo_evento'
 
 ### NotaEvento
-class ListaNotasEventoView(LoginRequiredMixin, ListView):
-    model = NotaEvento
+
+def get_notas(notas_evento):
+    medias = []
+    alunos = [nota_evento.aluno for nota_evento in notas_evento]
+    for aluno in list(set(alunos)):
+        notas_eventos = notas_evento.filter(aluno=aluno)
+        total_pesos = 0
+        soma_produtos = 0
+
+        for nota_evento in notas_eventos:
+            tipo_evento = nota_evento.evento.tipo_evento
+            peso_evento = tipo_evento.peso
+            nota_aluno = nota_evento.nota
+
+            total_pesos += peso_evento
+            soma_produtos += nota_aluno * peso_evento
+
+        if total_pesos != 0:
+            media_ponderada = soma_produtos / total_pesos
+        else:
+            media_ponderada = 0
+        
+        medias.append(
+            {
+                'id': aluno.id,
+                'aluno': aluno.nome,
+                'resultado': round(media_ponderada, 2)
+            }
+        )
+    return medias
+
+def get_notas_evento(escola_id, evento_id, data_inicio, data_fim):
+    is_media = False if evento_id else True
+    # se for especificado o evento_id, o resultado nao vai ser media, e sim avaliaçao
+    if escola_id:
+        notas_evento = NotaEvento.objects.filter(evento__escola_id=escola_id)
+        if evento_id:
+            notas_evento = notas_evento.filter(evento_id=evento_id)
+    elif evento_id:
+        notas_evento = NotaEvento.objects.filter(evento_id=evento_id)
+    else:
+        notas_evento = NotaEvento.objects.all()
+
+    if data_inicio:
+        notas_evento = notas_evento.filter(evento__data__gte=data_inicio)
+    if data_fim:
+        notas_evento = notas_evento.filter(evento__data__lte=data_fim)
+    
+    notas = get_notas(notas_evento)
+
+    return notas, is_media
+
+class ExportarDadosNotas(LoginRequiredMixin, View):
+    def get(self, request, *args, **kwargs):
+        escola_id = request.GET.get('escola')
+        evento_id = request.GET.get('evento')
+        data_inicio = request.GET.get('data_inicio')
+        data_fim = request.GET.get('data_fim')
+
+        notas_evento, is_media = get_notas_evento(
+            escola_id, evento_id, data_inicio, data_fim
+        )
+
+        filename_raw = f"notas"
+        if escola_id:
+            filename_raw += f"-escola_{escola_id}"
+        if evento_id:
+            filename_raw += f"-evento_{evento_id}"
+        if data_inicio:
+            filename_raw += f"-from_{data_inicio}"
+        if data_fim:
+            filename_raw += f"-to_{data_fim}"
+
+        response = HttpResponse(content_type='text/csv')
+        response['Content-Disposition'] = f'attachment; filename="{filename_raw}.csv"'
+
+        writer = csv.writer(response)
+        nota_col = 'Media' if is_media else 'Nota'
+        writer.writerow(['Aluno', nota_col])
+        
+        for nota in notas_evento:
+            writer.writerow([nota['aluno'], nota['resultado']])
+        
+        return response
+
+class ListaNotasEventoView(LoginRequiredMixin, TemplateView):
     template_name = 'notas/lista_notas_evento.html'
-    context_object_name = 'notas_evento'
     form_class = ListNotasEventoFilter
 
     def get_context_data(self, **kwargs):
@@ -264,99 +347,32 @@ class ListaNotasEventoView(LoginRequiredMixin, ListView):
         data_inicio = self.request.GET.get('data_inicio')
         data_fim = self.request.GET.get('data_fim')
 
-        if escola_id:
-            notas_evento = self.model.objects.filter(evento__escola_id=escola_id)
-            if evento_id:
-                notas_evento = notas_evento.filter(evento_id=evento_id)
-        else:
-            notas_evento = self.model.objects.all()
-            
-        if data_inicio:
-            notas_evento = notas_evento.filter(evento__data__gte=data_inicio)
-        if data_fim:
-            notas_evento = notas_evento.filter(evento__data__lte=data_fim)
+        notas_evento, is_media = get_notas_evento(
+            escola_id, evento_id, data_inicio, data_fim
+        )
 
-        medias = self.get_medias(notas_evento=notas_evento)
-
-        context['medias'] = medias
+        context['notas'] = notas_evento
+        context['is_media'] = is_media
         return context
     
-    def get_medias(self, notas_evento):
-        medias = []
-        alunos = [nota_evento.aluno for nota_evento in notas_evento]
-        for aluno in list(set(alunos)):
-            notas_eventos = notas_evento.filter(aluno=aluno)
-            total_pesos = 0
-            soma_produtos = 0
-
-            for nota_evento in notas_eventos:
-                tipo_evento = nota_evento.evento.tipo_evento
-                peso_evento = tipo_evento.peso
-                nota_aluno = nota_evento.nota
-
-                total_pesos += peso_evento
-                soma_produtos += nota_aluno * peso_evento
-
-            if total_pesos != 0:
-                media_ponderada = soma_produtos / total_pesos
-            else:
-                media_ponderada = 0
-            
-            medias.append(
-                {
-                    'id': aluno.id,
-                    'aluno': aluno.nome,
-                    'media': round(media_ponderada, 2)
-                }
-            )
-        return medias
-
 class ListaNotasAlunoView(LoginRequiredMixin, ListView):
     model = NotaEvento
     template_name = 'notas/lista_notas_aluno.html'
     context_object_name = 'notas_evento'
-    # form_class = ListNotasEventoOfAlunoFilter
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        # form = self.form_class(self.request.GET)
-        # context['form'] = form
         aluno_id = self.kwargs.get('aluno_id')
-        # evento_id = self.request.GET.get('evento')
-        # data_inicio = self.request.GET.get('data_inicio')
-        # data_fim = self.request.GET.get('data_fim')
-
-        # if aluno_id:
-        #     notas_evento = self.model.objects.filter(evento__aluno_id=aluno_id)
-        #     if evento_id:
-        #         notas_evento = notas_evento.filter(evento_id=evento_id)
-        # else:
-        #     notas_evento = self.model.objects.all()
-            
-        # if data_inicio:
-        #     notas_evento = notas_evento.filter(evento__data__gte=data_inicio)
-        # if data_fim:
-        #     notas_evento = notas_evento.filter(evento__data__lte=data_fim)
-
-        # medias = self.get_medias(notas_evento=notas_evento)
-
-        # context['medias'] = medias
         aluno = Aluno.objects.get(pk=aluno_id)
         context['aluno'] = aluno
         notas_evento = self.model.objects.filter(aluno=aluno)
         context['notas_evento'] = notas_evento
         return context
 
-# # class DetalheNotaEventoView(DetailView):
-# #     model = NotaEvento
-# #     template_name = 'escolas/detalhe_nota_evento.html'
-# #     context_object_name = 'nota_evento'
-
-class AlunosSemNotasListView(ListView):
+class AlunosSemNotasListView(LoginRequiredMixin, ListView):
     model = Aluno
     template_name = 'notas/lista_alunos_sem_nota.html'
     context_object_name = 'alunos_sem_notas'
-    # form_class = AvaliarEvento
 
     def get_context_data(self, **kwargs: Any) -> Dict[str, Any]:
         context = super().get_context_data(**kwargs)
@@ -372,7 +388,7 @@ class AlunosSemNotasListView(ListView):
         alunos_sem_notas = Aluno.objects.filter(escola=evento_escola).exclude(id__in=alunos_com_notas)
         return alunos_sem_notas
 
-class CriarNotaView(View):
+class CriarNotaView(LoginRequiredMixin, View):
     def post(self, request, *args, **kwargs):
         aluno_id = self.kwargs['aluno_id']
         evento_id = self.kwargs['evento_id']
@@ -380,9 +396,27 @@ class CriarNotaView(View):
         
         if form.is_valid():
             nota = form.cleaned_data['nota']
-            NotaEvento.objects.create(aluno_id=aluno_id, evento_id=evento_id, nota=nota)
+            operador = request.user
+            NotaEvento.objects.create(
+                aluno_id=aluno_id,
+                evento_id=evento_id, 
+                nota=nota,
+                operador=operador
+            )
         
         redirect_url = reverse('escolas:alunos_sem_notas', kwargs={'evento_id': evento_id})
         return redirect(redirect_url)
     
-    
+class ListaNotasAlunosEventoView(LoginRequiredMixin, ListView):
+    model = NotaEvento
+    template_name = 'notas/lista_notas_alunos_por_evento.html'
+    context_object_name = 'notas_alunos'
+
+    def get_context_data(self, **kwargs: Any) -> Dict[str, Any]:
+        context = super().get_context_data(**kwargs)
+        context['evento'] = Evento.objects.get(pk=self.kwargs['evento_id'])
+        return context
+
+    def get_queryset(self) -> QuerySet[Any]:
+        evento_id = self.kwargs['evento_id']
+        return self.model.objects.filter(evento_id=evento_id)

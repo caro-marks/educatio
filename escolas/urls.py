@@ -23,18 +23,19 @@ from .views import (
     DetalheParenteView,
 
     # eventos
-    # DetalheEventoView,
     ListaEventosView,
     CriaEventoView,
     CriaTipoEventoView,
-    # # DetalheTipoEventoView
-    # ListaTiposEventoView,
 
     # notas
     ListaNotasEventoView,
     ListaNotasAlunoView,
     AlunosSemNotasListView,
-    CriarNotaView
+    CriarNotaView,
+    ListaNotasAlunosEventoView,
+
+    # export
+    ExportarDadosNotas
 )
 
 app_name = 'escolas'
@@ -66,17 +67,15 @@ urlpatterns = [
     path('eventos/', ListaEventosView.as_view(), name='eventos'),
     path('evento/novo/', CriaEventoView.as_view(), name='cria_evento'),
     path('cria_tipo_evento/', CriaTipoEventoView.as_view(), name='cria_tipo_evento'),
-    # path('evento/<int:pk>/', DetalheEventoView.as_view(), name='evento'),
-
-    # # # tipo evento
-    # # path('tipos_evento/', ListaTiposEventoView.as_view(), name='tipos_evento'),
-    # # path('tipo_evento/<int:pk>/', DetalheTipoEventoView.as_view(), name='tipo_evento')
 
     # # nota evento
     path('notas_evento/', ListaNotasEventoView.as_view(), name='notas_evento'),
-    path('notas_evento/aluno/s<int:aluno_id>/', ListaNotasAlunoView.as_view(), name='notas_aluno'),
-    path('notas_evento/evento/<int:evento_id>/', AlunosSemNotasListView.as_view(), name='alunos_sem_notas'),
+    path('notas_evento/aluno/<int:aluno_id>/', ListaNotasAlunoView.as_view(), name='notas_aluno'),
+    path('notas_evento/evento/<int:evento_id>/alunos_sem_notas', AlunosSemNotasListView.as_view(), name='alunos_sem_notas'),
     path('notas_evento/evento/<int:evento_id>/aluno/<int:aluno_id>/', CriarNotaView.as_view(), name='criar_nota_aluno'),
-    # # path('nota_evento/<int:pk>/', DetalheTipoEventoView.as_view(), name='tipo_evento')
+    path('notas_evento/evento/<int:evento_id>/alunos_com_notas', ListaNotasAlunosEventoView.as_view(), name='alunos_com_notas'),
+
+    # # dados
+    path('exportar_dados_notas/', ExportarDadosNotas.as_view(), name='exportar_dados_notas')
 ]
                         

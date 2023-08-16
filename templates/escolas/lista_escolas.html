@@ -1,7 +1,8 @@
 {% extends 'homepage.html' %}
 
 {% block content %}
-    <div class="d-flex flex-row justify-content-between align-items-center">
+<div class="w-100">    
+    <div class="d-flex flex-row justify-content-between align-items-center mb-3">
         <h1>
             Escolas
         </h1>
@@ -10,10 +11,10 @@
         </a>
     </div>
     
-    <table id="escolas" class="table table-striped table-bordered table-hover" style="width:100%">
+    <table id="escolas" class="table table-striped table-bordeless mt-3" style="width:100%">
         <thead>            
             <tr>
-                <th>Escola</th>
+                <th>Razão Social</th>
                 <th>Diretor</th>
                 <th class="col-4">Ações</th>
             </tr>
@@ -21,9 +22,9 @@
         <tbody>
             {% for escola in escolas %}
             <tr>
-                <td>{{ escola.nome }}</td>
-                <td>{{ escola.diretor }}</td>
-                <td>
+                <td class="border-bottom">{{ escola.nome }}</td>
+                <td class="border-bottom">{{ escola.diretor }}</td>
+                <td class="text-center align-middle border-bottom">
                     <div class="btn-group" role="group" aria-label="Acoes">
                         <a role="button" class="btn custom-button" href="{% url 'escolas:escola' escola.id %}">
                             Detalhes
@@ -40,5 +41,6 @@
             {% endfor %}
         </tbody>
     </table>
+</div>
 
 {% endblock %}

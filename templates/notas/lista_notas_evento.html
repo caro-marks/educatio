@@ -2,33 +2,45 @@
 
 {% block content %}
     {% load crispy_forms_tags %}
-    <div>
-        <button class="btn btn-primary mt-3 mb-3" type="button" data-toggle="collapse" data-target="#filterForm" aria-expanded="false" aria-controls="filterForm">
+    <div class="d-flex justify-content-between align-items-center">
+        <button class="filter-button my-3" type="button" data-toggle="collapse" data-target="#filterForm" aria-expanded="false" aria-controls="filterForm">
             Filtros
         </button>
-        <div class="collapse" id="filterForm">            
-    
-            <form action="{% url 'escolas:notas_evento' %}" method="get">
-                {% csrf_token %}
-                <!-- {{ form|crispy }} -->
-                
-                {% crispy form %}
-                <button class="filter-button" type="submit"">Filtrar</button>
-            </form>
-        </div>
+        <a
+            href="{% url 'escolas:exportar_dados_notas' %}?escola={{ escola }}&evento={{ evento }}"
+            class="custom-button"
+        >
+            Exportar Dados
+        </a>
+        
+        <!-- <button class="custom-button">
+            Exportar dados
+        </button> -->
+    </div>
+    <div class="collapse py-2" id="filterForm">
+        <form action="{% url 'escolas:notas_evento' %}" method="get">
+            {% csrf_token %}                
+            {% crispy form %}
+        </form>
     </div>
 
     <h3>Avaliações por Evento</h1>
-    {% if medias %}
+    {% if notas %}
         <table id="notas-eventos" class="table table-striped table-bordered" style="width:100%">
             <tr>
                 <th>Aluno</th>
-                <th>Nota</th>
+                <th>
+                    {% if is_media %}
+                    Média ponderada
+                    {% else %}
+                    Avaliação
+                    {% endif %}
+                </th>
             </tr>
-            {% for media in medias %}
+            {% for nota in notas %}
                 <tr>
-                    <td>{{ media.aluno }}</td>
-                    <td>{{ media.media }}</td>
+                    <td>{{ nota.aluno }}</td>
+                    <td>{{ nota.resultado }}</td>
                 </tr>
             {% endfor %}
         </table>

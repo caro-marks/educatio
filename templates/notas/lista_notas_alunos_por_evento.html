@@ -1,0 +1,19 @@
+{% extends 'homepage.html' %}
+
+{% block content %}
+
+    <h3>Resultados das avaliações por aluno no evento {{ evento }}</h3>
+    {% if notas_alunos %}
+        <ul>
+            {% for nota in notas_alunos %}
+                <li>
+                    <strong>Aluno</strong>: {{ nota.aluno }}; 
+                    <strong>Nota</strong>: {{ nota.nota }}
+                </li>
+            {% endfor %}
+        </ul>
+
+    {% else %}
+        <p>Nenhum item encontrado.</p>
+    {% endif %}
+{% endblock %}
