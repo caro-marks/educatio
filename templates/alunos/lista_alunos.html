@@ -1,7 +1,15 @@
 {% extends 'homepage.html' %}
 
 {% block content %}
+<div class="w-100">
     {% load crispy_forms_tags %}
+    
+    <div class="d-flex flex-row justify-content-between align-items-center mb-3">
+        <h1>Lista de Alunos</h1>
+        <a role="button" class="btn custom-button" href="{% url 'escolas:cria_aluno' %}?escola={{ request.GET.escola|urlencode }}">
+            Novo
+        </a>
+    </div>
     <div>
         <button class="btn btn-primary mt-3 mb-3" type="button" data-toggle="collapse" data-target="#filterForm" aria-expanded="false" aria-controls="filterForm">
             Filtros
@@ -15,14 +23,7 @@
         </div>
     </div>
     
-    <div class="d-flex flex-row justify-content-between align-items-center">
-        <h1>Lista de Alunos</h1>
-        <a role="button" class="btn custom-button" href="{% url 'escolas:cria_aluno' %}?escola={{ request.GET.escola|urlencode }}">
-            Novo
-        </a>
-    </div>
-    
-    <table id="alunos" class="table table-striped table-bordered table-hover" style="width:100%">
+    <table id="alunos" class="table table-striped table-bordeless mt-3" style="width:100%">
         <thead>            
             <tr>
                 <th>Aluno</th>
@@ -33,9 +34,9 @@
         <tbody>
             {% for aluno in alunos_info %}
             <tr>
-                <td>{{ aluno.nome }}</td>
-                <td>{{ aluno.idade }}</td>
-                <td>
+                <td class="border-bottom">{{ aluno.nome }}</td>
+                <td class="border-bottom">{{ aluno.idade }}</td>
+                <td class="text-center align-middle border-bottom">
                     <div class="btn-group" role="group" aria-label="Acoes">
                         <a role="button" class="btn custom-button" href="{% url 'escolas:aluno' aluno.id %}">
                             Detalhes
@@ -49,4 +50,5 @@
             {% endfor %}
         </tbody>
     </table>
+</div>
 {% endblock %}

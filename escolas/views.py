@@ -121,6 +121,7 @@ class ListaAlunosView(LoginRequiredMixin, ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['form'] = self.form_class(self.request.GET)
+        print(f'\nall alunos:\n{self.model.objects.all()}\n')
         context['alunos'] = self.model.objects.filter(
             ativo=True
         )
