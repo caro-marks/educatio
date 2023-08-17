@@ -1,8 +1,8 @@
 {% load static %}
 <!-- Navbar -->
-<nav class="navbar navbar-expand-md fixed-top bg-light navbar-light">
-    <div class="container">
-        <a class="navbar-brand" href="{% url 'escolas:homepage' %}">
+<nav class="navbar navbar-expand-md fixed-top bg-light navbar-light border border-success py-4 shadow">
+    <div class="container border border-danger">
+        <a class="navbar-brand border border-warning" href="{% url 'escolas:homepage' %}">
             <img
               id="educatio-logo"
               src="{% static 'imgs/logo.svg' %}"
@@ -22,8 +22,8 @@
         >
             <i class="fas fa-bars"></i>
         </button>
-        <div class="collapse navbar-collapse" id="mainNavbar">
-            <ul class="navbar-nav ms-auto align-items-center">
+        <div class="collapse navbar-collapse border border-info justify-content-end" id="mainNavbar">
+            <ul class="navbar-nav ms-auto align-items-center border border-black">
                 {% if request.user.is_authenticated %}
                     {% if request.user.is_superuser %}
                         <li class="nav-item ms-3">

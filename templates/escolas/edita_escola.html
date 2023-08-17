@@ -1,0 +1,17 @@
+{% extends 'homepage.html' %}
+
+{% block content %}
+    {% load crispy_forms_tags %}
+    <div class="row align-items-lg-center">
+        <div class="col-lg-2">      
+            <h2>Atualização de dados cadastrais de escola</h2>
+        </div>
+        <div class="col">
+            <form method="post" class="m-2 pt-4">
+                {% csrf_token %}
+                {% crispy form %}
+            </form>
+        </div>
+    </div>
+
+{% endblock %}

@@ -13,6 +13,8 @@ from .views import (
     EscolaCreateView,
     EscolasDetailView,
     EscolasListView,
+    EscolaUpdateView,
+    EscolaDesativaView,
 
     # alunos
     DetalheAlunoView,
@@ -53,6 +55,8 @@ urlpatterns = [
     path('escolas/', EscolasListView.as_view(), name='escolas'),
     path('escola/nova/', EscolaCreateView.as_view(), name='cria_escola'),
     path('escola/<int:pk>/', EscolasDetailView.as_view(), name='escola'),
+    path('escola/<int:pk>/edita', EscolaUpdateView.as_view(), name='edita_escola'),
+    path('escola/<int:pk>/desativa', EscolaDesativaView.as_view(), name='desativa_escola'),
 
     # aluno
     path('alunos/', ListaAlunosView.as_view(), name='alunos'),

@@ -32,6 +32,9 @@ class CriaEscolaForm(forms.ModelForm):
     class Meta:
         model = Escola
         exclude = ['operador', 'ativo']
+        labels = {
+            'nome': 'Razão Social'
+        }
         widgets = {
             'complemento': forms.Textarea(attrs={'rows': 2}),
             'estado': forms.Select(choices=ESTADOS_BRASILEIROS)
@@ -61,6 +64,48 @@ class CriaEscolaForm(forms.ModelForm):
             Row(
                 ButtonHolder(
                     Submit('submit', 'Cadastrar Escola', ),
+                ),
+                css_class="justify-content-md-end"
+            )
+        )
+
+class EditaEscolaForm(forms.ModelForm):
+
+    class Meta:
+        model = Escola
+        exclude = ['operador', 'ativo']
+        labels = {
+            'nome': 'Razão Social'
+        }
+        widgets = {
+            'complemento': forms.Textarea(attrs={'rows': 2}),
+            'estado': forms.Select(choices=ESTADOS_BRASILEIROS)
+        }
+    
+    def __init__(self, *args, **kwargs) -> None:
+        super().__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.layout = Layout(
+            Row(
+                Column('nome', css_class="col-md-8"),
+                Column('cnpj', css_class="col-md-4")
+            ),
+            Row(
+                Column('endereco', css_class="col-md-7"),
+                Column('bairro', css_class="col-md-5")
+            ),
+            Row(
+                Column('cep', css_class="col-md-2"),
+                Column('cidade', css_class="col-md-3"),
+                Column('estado', css_class="col-md-2"),               
+                Column('diretor')
+            ),
+            Row(
+                Column('complemento')
+            ),
+            Row(
+                ButtonHolder(
+                    Submit('submit', 'Editar Escola', ),
                 ),
                 css_class="justify-content-md-end"
             )

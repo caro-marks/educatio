@@ -14,10 +14,10 @@
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
 
 </head>
-<body class="d-flex align-items-center flex-column m-4" style="min-height: 90vh;">
+<body class="d-flex align-items-center flex-column m-4 border" style="min-height: 90vh;">
     {% include 'navbar.html' %}
-    <div class="container mt-5 pt-5">
-        <div class="d-flex justify-content-center align-items-center">
+    <div class="container my-5 py-5 border border-primary">
+        <div class="d-flex justify-content-center align-items-center border border-secondary">
             {% block content %}{% endblock %}
         </div>
     </div>

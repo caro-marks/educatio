@@ -1,14 +1,14 @@
 import datetime, csv
 from typing import Any, Dict
 from django.db.models.query import QuerySet
-from django.views.generic import ListView, DetailView, TemplateView, View, CreateView
+from django.views.generic import ListView, DetailView, TemplateView, View, CreateView, UpdateView
 from .models import CustomUser, Escola, Aluno, Evento, TipoEvento, NotaEvento, Parente
-from .forms import UsuarioForm, CriaEscolaForm, ListAlunosFilter, CriaAlunoForm, CriaParenteForm, ListEventosFilter, CriaEventoForm, CriaTipoEvento, ListNotasEventoFilter, AvaliarEventoForm
+from .forms import UsuarioForm, CriaEscolaForm, ListAlunosFilter, CriaAlunoForm, CriaParenteForm, ListEventosFilter, CriaEventoForm, CriaTipoEvento, ListNotasEventoFilter, AvaliarEventoForm, EditaEscolaForm
 from django.contrib.auth.models import Group
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse, reverse_lazy
-from django.shortcuts import redirect
-from django.http import HttpResponse
+from django.shortcuts import redirect, get_object_or_404
+from django.http import HttpRequest, HttpResponse
     
 ### HOMEPAGE
 
@@ -66,8 +66,7 @@ class EscolasListView(LoginRequiredMixin, ListView):
     def get_queryset(self) -> QuerySet[Any]:
         queryset = super().get_queryset().filter(ativo=True)
         return queryset.order_by()
-
-    
+ 
 class EscolaCreateView(LoginRequiredMixin, CreateView):
     """
     Cria uma escola, e retorna pra lista de escolas
@@ -75,11 +74,36 @@ class EscolaCreateView(LoginRequiredMixin, CreateView):
     model = Escola
     form_class = CriaEscolaForm
     template_name = 'escolas/cria_escola.html'
-    success_url = '/escolas/'
+    
+    def get_success_url(self) -> str:
+        return reverse('escolas:escola', args=[self.object.pk])
 
     def form_valid(self, form):
         form.instance.operador = self.request.user
         return super().form_valid(form)
+
+class EscolaUpdateView(LoginRequiredMixin, UpdateView):
+    model = Escola
+    form_class = EditaEscolaForm
+    template_name = 'escolas/edita_escola.html'
+    
+    def get_success_url(self) -> str:
+        return reverse('escolas:escola', args=[self.object.pk])
+
+    def form_valid(self, form):
+        form.instance.operador = self.request.user
+        return super().form_valid(form)
+    
+class EscolaDesativaView(LoginRequiredMixin, View):
+    model = Escola
+    # success_url ='/escolas/'
+    
+    def get(self, request, pk):
+        objeto = get_object_or_404(self.model, pk=pk)
+        objeto.ativo = False
+        objeto.save()
+        redirect_url = reverse('escolas:escolas')
+        return redirect(redirect_url) 
 
 
 ### Aluno
