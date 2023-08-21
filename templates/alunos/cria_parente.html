@@ -1,11 +1,26 @@
-{% extends 'homepage.html' %}
 
-{% block content %}  
+<form action="{% url 'escolas:cria_parente' aluno.id %}" method="post">
+    <div id="parenteModal" class="modal fade" role="dialog">
+        <div class="modal-dialog">
 
-    {% load crispy_forms_tags %}
-    <form action="{% url 'escolas:cria_parente' aluno_id %}" method="post">
-        {% csrf_token %}
-        {{ form|crispy }}
-        <button class="filter-button" type="submit"">Cadastrar Parente</button>
-    </form>
-{% endblock %}
+        <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Cadastro de Parente</h4>
+                </div>
+                <div class="modal-body">
+                    {%load crispy_forms_tags %} 
+                    {% csrf_token %}
+                
+                    {{ parente_form|crispy }}
+                </div>
+                <div class="modal-footer">
+                    <button class="filter-button" type="submit">Cadastrar Parente</button>
+                    <button class="btn btn-default" data-dismiss="modal">Cancelar</button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</form>

@@ -28,14 +28,16 @@
             <tr>
                 <th>Aluno</th>
                 <th>Idade</th>
-                <th class="col-4">Ações</th>
+                <th>Escola</th>
+                <th class="col-3">Ações</th>
             </tr>
         </thead>
         <tbody>
-            {% for aluno in alunos_info %}
+            {% for aluno in alunos %}
             <tr>
                 <td class="border-bottom">{{ aluno.nome }}</td>
                 <td class="border-bottom">{{ aluno.idade }}</td>
+                <td class="border-bottom">{{ aluno.escola }}</td>
                 <td class="text-center align-middle border-bottom">
                     <div class="btn-group" role="group" aria-label="Acoes">
                         <a role="button" class="btn custom-button" href="{% url 'escolas:aluno' aluno.id %}">

@@ -162,6 +162,57 @@ class CriaAlunoForm(forms.ModelForm):
             )
         )
 
+class EditaAlunoForm(forms.ModelForm):
+    class Meta:
+        model = Aluno
+        exclude = ['operador', 'familia']
+        widgets = {
+            'data_nascimento': DateInput(attrs={'type': 'date'}),
+            'info_adicionais': forms.Textarea(attrs={'rows': 2}),
+            'estado': forms.Select(choices=ESTADOS_BRASILEIROS)
+        }
+    
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.layout = Layout(
+            Row(
+                Column('nome', css_class="col-md-9"),
+                Column('cpf', css_class="col-md-3")
+            ),
+            Row(
+                Column('endereco', css_class="col-md-4"),
+                Column('bairro', css_class="col-md-2"),
+                Column('complemento')
+            ),
+            Row(
+                Column('cep', css_class="col-md-2"),
+                Column('cidade', css_class="col-md-3"),
+                Column('estado', css_class="col-md-2"),               
+                Column('data_nascimento')
+            ),
+            Row(
+                Column('escola', css_class='col-md-6'),
+                Column('periodo', css_class='col-md-3'),
+                Column('serie', css_class='col-md-3'),
+            ),
+            Row(
+                Column('estado_civil_pais', css_class='col-md-3'),
+                Column('cras', css_class='col-md-3'),
+                Column('vulnerabilidades', css_class='col-md-3'),
+                Column('remedios', css_class='col-md-3'),
+            ),
+            Row(
+                Column('info_adicionais'),
+            ),
+            Row(
+                ButtonHolder(
+                    Submit('submit', 'Editar aluno', ),
+                ),
+                css_class="justify-content-md-end pr-1"
+            )
+        )
+
 class ListAlunosFilter(forms.Form):
     escola = forms.ChoiceField(choices=[('', '--')] + [(escola.id, escola.nome) for escola in Escola.objects.filter(ativo=True)], required=False)
 

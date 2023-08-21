@@ -14,44 +14,51 @@
         <p class="card-text"><strong>Estado:</strong> {{ aluno.estado }}</p>
         <p class="card-text"><strong>Nascimento:</strong> {{ aluno.data_nascimento }}</p>
         <p class="card-text"><strong>Escola:</strong> {{ aluno.escola }}</p>
-    <br>
-    <div class="d-flex flex-row justify-content-between align-items-center">
-        <h2>Parentes</h2>
-        <a role="button" class="btn btn-secondary" href="{% url 'escolas:cria_parente' aluno.id %}">
-            Novo
+        <a href="{% url 'escolas:edita_aluno' aluno.id %}" class="mt-5 btn btn-primary">
+            Editar
         </a>
-    </div>
-    <table id="aluno" class="table table-striped table-bordeless mt-3" style="width:100%">
-        <thead>
-            <tr>
-                <th>Nome</th>
-                <th>Grau de Parentesco</th>
-                <th>Info</th>
-                <th>Ações</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for parente in aluno.familia.all %}
+        <button class="mt-5 btn btn-danger" type="button" data-toggle="modal" data-target="#desativaAlunoModal">
+            Desativar
+        </button>
+        <div class="d-flex flex-row justify-content-between align-items-center mt-2">
+            <h2>Parentes</h2>     
+            <button type="button" class="btn btn-secondary" data-toggle="modal" data-target="#parenteModal">
+                Novo Parente
+            </button>
+        </div>
+        <table id="aluno" class="table table-striped table-bordeless mt-3" style="width:100%">
+            <thead>
                 <tr>
-                    <td class="border-bottom">{{ parente.nome }}</td>
-                    <td class="border-bottom">{{ parente.get_grau_parentesco_display }}</td>
-                    <td class="border-bottom">
-                        {% if parente.principal_responsavel %}
-                            Principal Responsavel; 
-                        {% endif %}
-                        {{ parente.info_adicionais }}
-                    </td>
-                    <td class="text-center align-middle border-bottom">
-                        <div class="btn-group" role="group" aria-label="Acoes">
-                            <a role="button" class="btn btn-info" href="{% url 'escolas:parente' aluno.id parente.id %}">
-                                Detalhes
-                            </a>
-                        </div>
-                    </td>
+                    <th>Nome</th>
+                    <th>Grau de Parentesco</th>
+                    <th>Info</th>
+                    <th>Ações</th>
                 </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+                {% for parente in aluno.familia.all %}
+                    <tr>
+                        <td class="border-bottom">{{ parente.nome }}</td>
+                        <td class="border-bottom">{{ parente.get_grau_parentesco_display }}</td>
+                        <td class="border-bottom">
+                            {% if parente.principal_responsavel %}
+                                Principal Responsavel; 
+                            {% endif %}
+                            {{ parente.info_adicionais }}
+                        </td>
+                        <td class="text-center align-middle border-bottom">
+                            <div class="btn-group" role="group" aria-label="Acoes">
+                                <a role="button" class="btn btn-info" href="{% url 'escolas:parente' aluno.id parente.id %}">
+                                    Detalhes
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
     </div>
 </div>
+{% include 'alunos/cria_parente.html' %}
+{% include 'alunos/desativa_aluno.html' %}
 {% endblock %}

@@ -3,7 +3,7 @@ from typing import Any, Dict
 from django.db.models.query import QuerySet
 from django.views.generic import ListView, DetailView, TemplateView, View, CreateView, UpdateView
 from .models import CustomUser, Escola, Aluno, Evento, TipoEvento, NotaEvento, Parente
-from .forms import UsuarioForm, CriaEscolaForm, ListAlunosFilter, CriaAlunoForm, CriaParenteForm, ListEventosFilter, CriaEventoForm, CriaTipoEvento, ListNotasEventoFilter, AvaliarEventoForm, EditaEscolaForm
+from .forms import UsuarioForm, CriaEscolaForm, ListAlunosFilter, CriaAlunoForm, CriaParenteForm, ListEventosFilter, CriaEventoForm, CriaTipoEvento, ListNotasEventoFilter, AvaliarEventoForm, EditaEscolaForm, EditaAlunoForm
 from django.contrib.auth.models import Group
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse, reverse_lazy
@@ -65,7 +65,7 @@ class EscolasListView(LoginRequiredMixin, ListView):
 
     def get_queryset(self) -> QuerySet[Any]:
         queryset = super().get_queryset().filter(ativo=True)
-        return queryset.order_by()
+        return queryset.order_by('nome')
  
 class EscolaCreateView(LoginRequiredMixin, CreateView):
     """
@@ -80,6 +80,7 @@ class EscolaCreateView(LoginRequiredMixin, CreateView):
 
     def form_valid(self, form):
         form.instance.operador = self.request.user
+        form.instance.ativo = True
         return super().form_valid(form)
 
 class EscolaUpdateView(LoginRequiredMixin, UpdateView):
@@ -112,19 +113,22 @@ class DetalheAlunoView(LoginRequiredMixin, DetailView):
     template_name = 'alunos/detalhe_aluno.html'
     context_object_name = 'aluno'
 
-class ListaAlunosView(LoginRequiredMixin, ListView):
+    def get_context_data(self, **kwargs: Any) -> Dict[str, Any]:
+        context = super().get_context_data(**kwargs)
+        context['parente_form'] = CriaParenteForm()
+        return context
+
+class ListaAlunosView(LoginRequiredMixin, TemplateView):
     model = Aluno
     template_name = 'alunos/lista_alunos.html'
-    context_object_name = 'alunos'
     form_class = ListAlunosFilter
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['form'] = self.form_class(self.request.GET)
-        print(f'\nall alunos:\n{self.model.objects.all()}\n')
         context['alunos'] = self.model.objects.filter(
             ativo=True
-        )
+        ).order_by('nome')
 
         if escola_id := self.request.GET.get('escola'):
             context['alunos'] = self.model.objects.filter(escola__id=escola_id)
@@ -135,10 +139,11 @@ class ListaAlunosView(LoginRequiredMixin, ListView):
                 {
                     'id': aluno.id,
                     'nome': aluno.nome,
+                    'escola': aluno.escola,
                     'idade': self.get_idade(aluno.data_nascimento),
                 })
         
-        context['alunos_info'] = alunos_info
+        context['alunos'] = alunos_info
         return context
     
     def get_idade(self, data_nascimento):
@@ -166,8 +171,30 @@ class AlunoCreateView(LoginRequiredMixin, CreateView):
 
     def form_valid(self, form):
         form.instance.operador = self.request.user
+        form.instance.ativo = True
         return super().form_valid(form)
 
+class AlunoUpdateView(LoginRequiredMixin, UpdateView):
+    model = Aluno
+    form_class = EditaAlunoForm
+    template_name = 'alunos/edita_aluno.html'
+    
+    def get_success_url(self) -> str:
+        return reverse('escolas:aluno', args=[self.object.pk])
+
+    def form_valid(self, form):
+        form.instance.operador = self.request.user
+        return super().form_valid(form)
+
+class AlunoDesativaView(LoginRequiredMixin, View):
+    model = Aluno
+    
+    def get(self, request, pk):
+        objeto = get_object_or_404(self.model, pk=pk)
+        objeto.ativo = False
+        objeto.save()
+        redirect_url = reverse('escolas:alunos')
+        return redirect(redirect_url) 
 
 ### Parente
 class ParenteCreateView(LoginRequiredMixin, CreateView):
@@ -219,7 +246,7 @@ class ListaEventosView(LoginRequiredMixin, ListView):
         context['form'] = self.form_class(self.request.GET)
 
         if escola_id := self.request.GET.get('escola'):
-            context['eventos'] = self.model.objects.filter(escola__id=escola_id)
+            context['eventos'] = self.model.objects.filter(escola__id=escola_id).order_by('-data', 'descricao', 'tipo_evento', 'escola')
         
         return context
 
@@ -233,7 +260,7 @@ class ListaEventosView(LoginRequiredMixin, ListView):
             if data_fim := form.cleaned_data.get('data_fim'):
                 queryset = queryset.filter(data__lte=data_fim)
             
-        return queryset
+        return queryset.order_by('-data', 'descricao', 'tipo_evento','escola')
 
 class CriaEventoView(LoginRequiredMixin, CreateView):
     model = Evento

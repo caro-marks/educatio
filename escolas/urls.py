@@ -20,6 +20,8 @@ from .views import (
     DetalheAlunoView,
     ListaAlunosView,
     AlunoCreateView,
+    AlunoUpdateView,
+    AlunoDesativaView,
     # # parente
     ParenteCreateView,
     DetalheParenteView,
@@ -62,6 +64,8 @@ urlpatterns = [
     path('alunos/', ListaAlunosView.as_view(), name='alunos'),
     path('aluno/novo/', AlunoCreateView.as_view(), name='cria_aluno'),
     path('aluno/<int:pk>/', DetalheAlunoView.as_view(), name='aluno'),
+    path('aluno/<int:pk>/edita', AlunoUpdateView.as_view(), name='edita_aluno'),
+    path('aluno/<int:pk>/desativa', AlunoDesativaView.as_view(), name='desativa_aluno'),
 
     # parente
     path('aluno/<int:aluno_id>/parente/novo/', ParenteCreateView.as_view(), name='cria_parente'),

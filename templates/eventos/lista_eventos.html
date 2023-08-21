@@ -2,7 +2,15 @@
 
 
 {% block content %}
+<div class="w-100">
     {% load crispy_forms_tags %}
+    
+    <div class="d-flex flex-row justify-content-between align-items-center mb-3">
+        <h1>Lista de Eventos</h1>
+        <a role="button" class="btn custom-button" href="{% url 'escolas:cria_evento' %}?escola={{ request.GET.escola|urlencode }}">
+            Novo
+        </a>
+    </div>
     <div>
         <button class="btn btn-primary mt-3 mb-3" type="button" data-toggle="collapse" data-target="#filterForm" aria-expanded="false" aria-controls="filterForm">
             Filtros
@@ -16,35 +24,28 @@
             </form>
         </div>
     </div>
-    
-    <div class="d-flex flex-row justify-content-between align-items-center">
-        <h1>Lista de Eventos</h1>
-        <a role="button" class="btn custom-button" href="{% url 'escolas:cria_evento' %}?escola={{ request.GET.escola|urlencode }}">
-            Novo
-        </a>
-    </div>
-    <table id="eventos" class="table table-striped table-bordered table-hover" style="width:100%">
+    <table id="eventos" class="table table-striped table-bordeless mt-3" style="width:100%">
         <thead>            
             <tr>
                 <th>Descrição</th>
+                <th>Tipo</th>
                 {% if not request.GET.escola %}
                 <th>Escola</th>
                 {% endif %}
                 <th>Data de Conclusão</th>
-                <th>Tipo</th>
-                <th>Ações</th>
+                <th class="col-3">Ações</th>
             </tr>
         </thead>
         <tbody>
             {% for evento in eventos %}
             <tr>
-                <td>{{ evento.descricao }}</td>
+                <td class="border-bottom">{{ evento.descricao }}</td>
+                <td class="border-bottom">{{ evento.tipo_evento }}</td>
                 {% if not request.GET.escola %}
-                <td>{{ evento.escola.nome }}</td>
+                <td class="border-bottom">{{ evento.escola.nome }}</td>
                 {% endif %}
-                <td>{{ evento.data }}</td>
-                <td>{{ evento.tipo_evento }}</td>
-                <td>
+                <td class="border-bottom">{{ evento.data }}</td>
+                <td class="text-center align-middle border-bottom">
                     <div class="btn-group" role="group" aria-label="Acoes">
                         <a role="button" class="btn custom-button" href="{% url 'escolas:alunos_sem_notas' evento.id %}">
                             <!-- leva pra pagina de dar notas para alunos sem nota -->
@@ -60,3 +61,4 @@
         </tbody>
     </table>
 {% endblock %}
+</div>

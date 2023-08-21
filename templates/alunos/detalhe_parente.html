@@ -1,9 +1,22 @@
 {% extends 'homepage.html' %}
 
-{% block content %}    
-    <h3 class="pb-2">Detalhes do Parente: {{ parente.nome }}</h3>
-    <p><strong>{{ parente.grau_parentesco }}</strong> de {{ aluno }}</p>
-    <p><strong>Idade:</strong> {{ parente.idade }}</p>
-    <p><strong>principal_responsavel:</strong> {{ parente.principal_responsavel }}</p>
-    <p><strong>info_adicionais:</strong> {{ parente.info_adicionais }}</p>
+{% block content %}
+<div class="card w-75 shadow-lg">
+    <div class="card-header">     
+        <h2 class="card-text">
+            Detalhes do parente: {{ parente.nome }}
+        </h2>
+    </div>
+    
+    <div class="card-body">
+        <p class="card-text">
+            <strong>
+                {{ parente.get_grau_parentesco_display }}
+            </strong> de {{ aluno }}
+        </p>
+        <p class="card-text"><strong>Idade:</strong> {{ parente.idade }}</p>
+        <p class="card-text"><strong>Principal responsavel:</strong>{% if parente.principal_responsavel %} Sim {% else %} Não {% endif %}</p>
+        <p class="card-text"><strong>Informações adicionais:</strong> {{ parente.info_adicionais }}</p>
+    </div>
+</div>
 {% endblock %}
