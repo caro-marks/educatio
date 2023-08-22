@@ -2,18 +2,24 @@
 
 {% block content %}
 
-    <h3>Resultados das avaliações por aluno no evento {{ evento }}</h3>
-    {% if notas_alunos %}
-        <ul>
+<div class="w-100">
+    <h3>Resultados das avaliações por aluno no evento: {{ evento.tipo_evento }} - {{ evento.descricao }}</h3>
+    <table id="avaliacoes-evento-por-aluno" class="table table-striped table-bordeless mt-3" style="width:100%">
+        <thead>
+            <tr>
+                <th>Aluno</th>
+                <th>Nota</th>
+            </tr>
+        </thead>
+        <tbody>
             {% for nota in notas_alunos %}
-                <li>
-                    <strong>Aluno</strong>: {{ nota.aluno }}; 
-                    <strong>Nota</strong>: {{ nota.nota }}
-                </li>
+            <tr>
+                <td class="border-bottom">{{ nota.aluno }}</td>
+                <td class="border-bottom">{{ nota.nota }}</td>
+            </tr>
             {% endfor %}
-        </ul>
+        </tbody>
+    </table>
+</div>
 
-    {% else %}
-        <p>Nenhum item encontrado.</p>
-    {% endif %}
 {% endblock %}

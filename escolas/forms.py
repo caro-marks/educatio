@@ -226,6 +226,21 @@ class ListEventosFilter(forms.Form):
     data_inicio = forms.DateField(label='De', required=False, widget=forms.DateInput(attrs={'type': 'date'}))
     data_fim = forms.DateField(label='Até', required=False, widget=forms.DateInput(attrs={'type': 'date'}))
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.form_class = 'form-horizontal'  # Aplica o estilo horizontal
+        self.helper.label_class = 'col-lg-2'  # Classe da label
+        self.helper.field_class = 'col-lg-10'  # Classe do campo
+        self.helper.layout = Layout(
+            Row(
+                Column('data_inicio', css_class='col-md-auto mx-1'),
+                Column('data_fim', css_class='col-md-auto mx-1'),
+                Submit('submit', 'Filtrar', css_class='col-md-auto'),
+                css_class='align-items-start'
+            )
+        )
+
 
 class CriaEventoForm(forms.ModelForm):
     class Meta:
@@ -250,21 +265,38 @@ class ListNotasEventoFilter(forms.Form):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.helper = FormHelper()
+        self.helper.form_class = 'form-horizontal'  # Aplica o estilo horizontal
+        self.helper.label_class = 'col-md-2 mr-1'  # Classe da label
+        self.helper.field_class = 'col-md-8 ml-1'  # Classe do campo
         self.helper.layout = Layout(
             Row(
-                Column('escola', css_class='col-md-6'),
-                Column('evento', css_class='col-md-6'),
+                Column('escola', css_class='col-md-3'),
+                Column('evento', css_class='col-md-3'),
+                Column('data_inicio', css_class='col-md-2'),
+                Column('data_fim', css_class='col-md-2'),
+                Submit('submit', 'Filtrar',),
+                css_class='align-items-start'
             ),
-            Row(
-                Column('data_inicio', css_class='col-md-6'),
-                Column('data_fim', css_class='col-md-6'),
-                css_class='mt-3'
-            ),
-            ButtonHolder(
-                Submit('submit', 'Filtrar',)
-            )
         )
 
 class AvaliarEventoForm(forms.Form):
     nota = forms.DecimalField(label='Nota', max_digits=5, decimal_places=2)
+
+    def __init__(self, *args, **kwargs):
+        super(AvaliarEventoForm, self).__init__(*args, **kwargs)
+        
+        # Crie um objeto helper para personalizar o layout
+        self.helper = FormHelper()
+        self.helper.form_class = 'form-horizontal'  # Aplica o estilo horizontal
+        self.helper.label_class = 'col-lg-2'  # Classe da label
+        self.helper.field_class = 'col-lg-10'  # Classe do campo
+
+        # Defina o layout dos campos
+        self.helper.layout = Layout(
+            Row(
+                Column('nota', css_class='col-md-8'),
+                Submit('submit', 'Avaliar',),
+                css_class='align-items-start'
+            )
+        )
 

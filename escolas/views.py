@@ -333,7 +333,7 @@ def get_notas(notas_evento):
     return medias
 
 def get_notas_evento(escola_id, evento_id, data_inicio, data_fim):
-    is_media = False if evento_id else True
+    nota_field = 'Media' if evento_id else 'Avaliação'
     # se for especificado o evento_id, o resultado nao vai ser media, e sim avaliaçao
     if escola_id:
         notas_evento = NotaEvento.objects.filter(evento__escola_id=escola_id)
@@ -351,7 +351,7 @@ def get_notas_evento(escola_id, evento_id, data_inicio, data_fim):
     
     notas = get_notas(notas_evento)
 
-    return notas, is_media
+    return notas, nota_field
 
 class ExportarDadosNotas(LoginRequiredMixin, View):
     def get(self, request, *args, **kwargs):
@@ -360,7 +360,7 @@ class ExportarDadosNotas(LoginRequiredMixin, View):
         data_inicio = request.GET.get('data_inicio')
         data_fim = request.GET.get('data_fim')
 
-        notas_evento, is_media = get_notas_evento(
+        notas_evento, nota_field = get_notas_evento(
             escola_id, evento_id, data_inicio, data_fim
         )
 
@@ -378,8 +378,7 @@ class ExportarDadosNotas(LoginRequiredMixin, View):
         response['Content-Disposition'] = f'attachment; filename="{filename_raw}.csv"'
 
         writer = csv.writer(response)
-        nota_col = 'Media' if is_media else 'Nota'
-        writer.writerow(['Aluno', nota_col])
+        writer.writerow(['Aluno', nota_field])
         
         for nota in notas_evento:
             writer.writerow([nota['aluno'], nota['resultado']])
@@ -399,12 +398,12 @@ class ListaNotasEventoView(LoginRequiredMixin, TemplateView):
         data_inicio = self.request.GET.get('data_inicio')
         data_fim = self.request.GET.get('data_fim')
 
-        notas_evento, is_media = get_notas_evento(
+        notas_evento, nota_field = get_notas_evento(
             escola_id, evento_id, data_inicio, data_fim
         )
 
         context['notas'] = notas_evento
-        context['is_media'] = is_media
+        context['nota_field'] = nota_field
         return context
     
 class ListaNotasAlunoView(LoginRequiredMixin, ListView):
