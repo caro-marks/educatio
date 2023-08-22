@@ -35,6 +35,8 @@ class Parente(models.Model):
     grau_parentesco = models.CharField(max_length=3, choices=Parentesco.choices())
     idade = models.PositiveSmallIntegerField(blank=True, null=True)
     principal_responsavel = models.BooleanField(default=False)
+    telefone = models.CharField(max_length=11, null=True, blank=True)
+    email = models.EmailField(null=True, blank=True)
     info_adicionais = models.CharField(max_length=100, blank=True)
     criado_em = models.DateTimeField(auto_now_add=True)
     atualizado_em = models.DateTimeField(auto_now=True)
@@ -86,7 +88,7 @@ class TipoEvento(models.Model):
 
 class Evento(models.Model):
     descricao = models.CharField(max_length=100)
-    data = models.DateField(blank=True, null=True)
+    # data = models.DateField(blank=True, null=True)
     escola = models.ForeignKey(Escola, on_delete=models.CASCADE)
     tipo_evento = models.ForeignKey(TipoEvento, on_delete=models.CASCADE)
 
@@ -98,8 +100,8 @@ class NotaEvento(models.Model):
     aluno = models.ForeignKey(Aluno, on_delete=models.CASCADE)
     evento = models.ForeignKey(Evento, on_delete=models.CASCADE)
     nota = models.DecimalField(max_digits=5, decimal_places=2)
-    # data_entrega = models.DateField()
-    # observacoes = models.CharField(max_length=50)
+    data_entrega = models.DateField(auto_now_add=True)
+    observacoes = models.CharField(max_length=50)
     criado_em = models.DateTimeField(auto_now_add=True)
     operador = models.ForeignKey(CustomUser, null=True, blank=True, on_delete=models.CASCADE)
 

@@ -69,6 +69,7 @@ class CriaEscolaForm(forms.ModelForm):
             )
         )
 
+
 class EditaEscolaForm(forms.ModelForm):
 
     class Meta:
@@ -111,7 +112,13 @@ class EditaEscolaForm(forms.ModelForm):
             )
         )
 
+
 class CriaAlunoForm(forms.ModelForm):
+    escola = forms.ModelChoiceField(
+        queryset=Escola.objects.filter(ativo=True),
+        empty_label="--",
+        required=False
+    )
     class Meta:
         model = Aluno
         exclude = ['operador', 'familia']
@@ -161,6 +168,7 @@ class CriaAlunoForm(forms.ModelForm):
                 css_class="justify-content-md-end pr-1"
             )
         )
+
 
 class EditaAlunoForm(forms.ModelForm):
     class Meta:
@@ -213,15 +221,17 @@ class EditaAlunoForm(forms.ModelForm):
             )
         )
 
+
 class ListAlunosFilter(forms.Form):
     escola = forms.ChoiceField(choices=[('', '--')] + [(escola.id, escola.nome) for escola in Escola.objects.filter(ativo=True)], required=False)
+
 
 class CriaParenteForm(forms.ModelForm):
     class Meta:
         model = Parente
         exclude = ['operador']
-    
 
+ 
 class ListEventosFilter(forms.Form):
     data_inicio = forms.DateField(label='De', required=False, widget=forms.DateInput(attrs={'type': 'date'}))
     data_fim = forms.DateField(label='Até', required=False, widget=forms.DateInput(attrs={'type': 'date'}))
@@ -243,14 +253,26 @@ class ListEventosFilter(forms.Form):
 
 
 class CriaEventoForm(forms.ModelForm):
+    escola = forms.ModelChoiceField(
+        queryset=Escola.objects.filter(ativo=True),
+        empty_label="--",
+        required=False
+    )
+    # escola = forms.ChoiceField(choices=[('', '--')] + [(escola.id, escola.nome) for escola in Escola.objects.filter(ativo=True)], required=False)
     class Meta:
         model = Evento
         fields = '__all__'
-        widgets = {
-            'data': DateInput(attrs={'type': 'date'}),
-        }
 
-class CriaTipoEvento(forms.ModelForm):
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.form_class = 'form-horizontal'  # Aplica o estilo horizontal
+        self.helper.label_class = 'col-3'  # Classe da label
+        self.helper.field_class = 'col-9'  # Classe do campo
+
+
+class CriaTipoEventoForm(forms.ModelForm):
     class Meta:
         model = TipoEvento
         fields = '__all__'
@@ -278,6 +300,7 @@ class ListNotasEventoFilter(forms.Form):
                 css_class='align-items-start'
             ),
         )
+
 
 class AvaliarEventoForm(forms.Form):
     nota = forms.DecimalField(label='Nota', max_digits=5, decimal_places=2)
