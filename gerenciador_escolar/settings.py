@@ -137,7 +137,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 AUTH_USER_MODEL = 'escolas.CustomUser'
 
-LOGOUT_REDIRECT_URL = 'login'
+LOGOUT_REDIRECT_URL = 'escolas:homepage'
 LOGIN_REDIRECT_URL = 'escolas:homepage'
 
 CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap4"

@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 from .enums import Parentesco, EstadosCivis, PeriodoEscola, SerieEscolar
+from django.core.validators import MinLengthValidator, RegexValidator
 
 # Create your models here.
 
@@ -21,6 +22,19 @@ class Escola(models.Model):
     estado = models.CharField(max_length=2)
     complemento = models.CharField(max_length=50, null=True, blank=True)
     diretor = models.CharField(max_length=50)
+    telefone_principal = models.CharField(
+        max_length=15, blank=True, null=True,
+        validators=[
+            MinLengthValidator(13, 'Número de telefone deve ter no mínimo 10 dígitos'),
+        ]
+    )
+    telefone_secundario = models.CharField(
+        max_length=15, blank=True, null=True,
+        validators=[
+            MinLengthValidator(13, 'Número de telefone deve ter no mínimo 10 dígitos'),
+        ]
+    )
+    email = models.EmailField(blank=True, null=True)
     ativo = models.BooleanField(default=True)
     criado_em = models.DateTimeField(auto_now_add=True)
     atualizado_em = models.DateTimeField(auto_now=True)

@@ -9,6 +9,12 @@ from django.forms.widgets import DateInput
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Row, Column, ButtonHolder, Submit
 
+class TelefoneWidget(forms.TextInput):
+    def format_value(self, value):
+        if value:
+            return f'({value[:2]}) {value[2:6]}-{value[6:]}'
+        return value
+
 
 class UsuarioForm(forms.ModelForm):
     class Meta:
@@ -27,17 +33,23 @@ class UsuarioForm(forms.ModelForm):
         return user
 
 
-class CriaEscolaForm(forms.ModelForm):
+class CriaEscolaForm(forms.ModelForm):    
+    telefone_principal = forms.CharField(required=True)
+    # telefone_secundario = forms.CharField(required=False)
 
     class Meta:
         model = Escola
         exclude = ['operador', 'ativo']
         labels = {
-            'nome': 'Razão Social'
+            'nome': 'Razão Social',
+            'telefone_principal': 'Telefone principal',
+            'telefone_secundario': 'Telefone secundário'
         }
         widgets = {
             'complemento': forms.Textarea(attrs={'rows': 2}),
-            'estado': forms.Select(choices=ESTADOS_BRASILEIROS)
+            'estado': forms.Select(choices=ESTADOS_BRASILEIROS),
+            'telefone_principal': TelefoneWidget(),
+            'telefone_secundario': TelefoneWidget()
         }
     
     def __init__(self, *args, **kwargs) -> None:
@@ -49,14 +61,17 @@ class CriaEscolaForm(forms.ModelForm):
                 Column('cnpj', css_class="col-md-4")
             ),
             Row(
-                Column('endereco', css_class="col-md-7"),
-                Column('bairro', css_class="col-md-5")
+                Column('telefone_principal', css_class="col-md-3"),
+                Column('telefone_secundario', css_class="col-md-3"),
+                Column('email', css_class="col-md-3"),              
+                Column('diretor')
             ),
             Row(
+                Column('endereco', css_class="col-md-4"),
+                Column('bairro', css_class="col-md-2"),
                 Column('cep', css_class="col-md-2"),
-                Column('cidade', css_class="col-md-3"),
-                Column('estado', css_class="col-md-2"),               
-                Column('diretor')
+                Column('cidade', css_class="col-md-2"),
+                Column('estado', css_class="col"), 
             ),
             Row(
                 Column('complemento')
@@ -258,7 +273,7 @@ class CriaEventoForm(forms.ModelForm):
         empty_label="--",
         required=False
     )
-    # escola = forms.ChoiceField(choices=[('', '--')] + [(escola.id, escola.nome) for escola in Escola.objects.filter(ativo=True)], required=False)
+    
     class Meta:
         model = Evento
         fields = '__all__'
@@ -297,7 +312,7 @@ class ListNotasEventoFilter(forms.Form):
                 Column('data_inicio', css_class='col-md-2'),
                 Column('data_fim', css_class='col-md-2'),
                 Submit('submit', 'Filtrar',),
-                css_class='align-items-start'
+                css_class='justify-content-between align-items-start'
             ),
         )
 
