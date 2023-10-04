@@ -30,17 +30,9 @@
                             <a class="btn btn-black btn-rounded" href="{% url 'escolas:usuarios' %}">Usuários</a>
                         </li>
                     {% endif %}
+                    
                     <li class="nav-item">
                         <a class="nav-link mx-2" href="{% url 'escolas:escolas' %}"><i class="fas fa-school mr-1"></i>Escolas</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link mx-2" href="{% url 'escolas:alunos' %}"><i class="fas fa-graduation-cap mr-1"></i>Alunos</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link mx-2" href="{% url 'escolas:eventos' %}"><i class="fas fa-calendar mr-1"></i>Eventos</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link mx-2" href="{% url 'escolas:notas_evento' %}"><i class="fas fa-clipboard mr-1"></i>Avaliações</a>
                     </li>
                     <li class="nav-item ms-3">
                         <a class="btn btn-blue btn-rounded" href="{% url 'logout' %}">Sair</a>

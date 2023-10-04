@@ -1,7 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 from .enums import Parentesco, EstadosCivis, PeriodoEscola, SerieEscolar
-from django.core.validators import MinLengthValidator, RegexValidator
+from django.core.validators import MinLengthValidator
 
 # Create your models here.
 
@@ -14,10 +14,10 @@ class CustomUser(AbstractUser):
 
 class Escola(models.Model):
     nome = models.CharField(max_length=100)
-    cnpj = models.CharField(max_length=14, unique=True)
+    cnpj = models.CharField(max_length=18, unique=True)
     endereco = models.CharField(max_length=50)
     bairro = models.CharField(max_length=30)
-    cep = models.CharField(max_length=8)
+    cep = models.CharField(max_length=9)
     cidade = models.CharField(max_length=40)
     estado = models.CharField(max_length=2)
     complemento = models.CharField(max_length=50, null=True, blank=True)
@@ -91,36 +91,27 @@ class Aluno(models.Model):
         return self.nome
 
 
-class TipoEvento(models.Model):
-    descricao = models.CharField(max_length=50)
-    peso = models.DecimalField(max_digits=5, decimal_places=2)
-    # intervalo_de_avaliacao = models.CharField() // 
-
-    def __str__(self):
-        return self.descricao
-
-
-class Evento(models.Model):
+class Atividade(models.Model):
     descricao = models.CharField(max_length=100)
-    # data = models.DateField(blank=True, null=True)
+    peso = models.DecimalField(max_digits=5, decimal_places=2)
+    data = models.DateField()
     escola = models.ForeignKey(Escola, on_delete=models.CASCADE)
-    tipo_evento = models.ForeignKey(TipoEvento, on_delete=models.CASCADE)
 
     def __str__(self):
-        return f'{self.escola} {self.tipo_evento} {self.descricao}'
+        return f'{self.escola} - {self.descricao} / {self.data}'
 
 
-class NotaEvento(models.Model):
+class Resultado(models.Model):
     aluno = models.ForeignKey(Aluno, on_delete=models.CASCADE)
-    evento = models.ForeignKey(Evento, on_delete=models.CASCADE)
+    atividade = models.ForeignKey(Atividade, on_delete=models.CASCADE)
     nota = models.DecimalField(max_digits=5, decimal_places=2)
-    data_entrega = models.DateField(auto_now_add=True)
     observacoes = models.CharField(max_length=50)
     criado_em = models.DateTimeField(auto_now_add=True)
     operador = models.ForeignKey(CustomUser, null=True, blank=True, on_delete=models.CASCADE)
 
     def __str__(self):
-        return f'{self.evento} - {self.aluno}'
+        return f'{self.atividade} - {self.aluno}'
+
 
 # class Escola(models.Model):
 #     nome = models.CharField(max_length=100)  

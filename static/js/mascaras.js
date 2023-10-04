@@ -1,11 +1,6 @@
-
-// function mascaraTelefone(input) {
-//   let value = input.value.replace(/\D/g, '');
-//   if (value.length > 10) {
-//       input.value = `(${value.substring(0, 2)}) ${value.substring(2, 7)}-${value.substring(7, 11)}`;
-//   } else {
-//       value = value.padStart(10, '0')
-//       input.value = `(${value.substring(0, 2)}) ${value.substring(2, 6)}-${value.substring(7, 10)}`;
-//   }
-// }
-
+$(function(){
+  $('#id_cep').mask('00000-000');
+  $('#id_telefone_principal').mask('(00) 0000-0000');
+  $('#id_telefone_secundario').mask('(00) 00000-0000');
+  $('#id_cnpj').mask('00.000.000/0000-00', {reverse: true});
+})

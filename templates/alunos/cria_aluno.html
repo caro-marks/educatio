@@ -1,17 +1,15 @@
 {% extends 'homepage.html' %}
 
 {% block content %}
-    {% load crispy_forms_tags %}
-    <div class="row align-items-lg-center">
-        <div class="col-lg-2">      
-            <h2>Cadastro de aluno</h2>
-        </div>
-        <div class="col">
-            <form action="{% url 'escolas:cria_aluno' %}" method="post">
-                {% csrf_token %}
-                {% crispy form %}
-            </form>
-        </div>
+    <div class="container">
+        
+        {% load crispy_forms_tags %}      
+        <h4>Cadastro de aluno</h4>
+        <form action="{% url 'escolas:cria_aluno' %}" method="post">
+            {% csrf_token %}
+            {% crispy form %}
+        </form>
+    </div>
     </div>
 
 {% endblock %}

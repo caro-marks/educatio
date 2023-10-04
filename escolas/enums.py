@@ -37,6 +37,9 @@ class SerieEscolar(BaseEnum):
     SET = '7º ano'
     OIT = '8º ano'
     NON = '9º ano'
+    PEM = '1º E. M.'
+    SEM = '2º E. M.'
+    TEM = '3º E. M.'
 
 ESTADOS_BRASILEIROS = [
     ('', '--'),

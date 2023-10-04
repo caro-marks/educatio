@@ -29,12 +29,6 @@
                         <a role="button" class="btn custom-button" href="{% url 'escolas:escola' escola.id %}">
                             Detalhes
                         </a>
-                        <a role="button" class="btn custom-button" href="{% url 'escolas:alunos' %}?out=true&escola={{ escola.id|urlencode }}">
-                            Alunos
-                        </a>                        
-                        <a role="button" class="btn custom-button" href="{% url 'escolas:eventos' %}?escola={{ escola.id|urlencode }}">
-                            Eventos
-                        </a> 
                     </div>
                 </td>
             </tr>
