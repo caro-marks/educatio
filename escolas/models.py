@@ -49,9 +49,9 @@ class Parente(models.Model):
     grau_parentesco = models.CharField(max_length=3, choices=Parentesco.choices())
     idade = models.PositiveSmallIntegerField(blank=True, null=True)
     principal_responsavel = models.BooleanField(default=False)
-    telefone = models.CharField(max_length=11, null=True, blank=True)
+    telefone = models.CharField(max_length=15, null=True, blank=True)
     email = models.EmailField(null=True, blank=True)
-    info_adicionais = models.CharField(max_length=100, blank=True)
+    info_adicionais = models.CharField(max_length=200, blank=True)
     criado_em = models.DateTimeField(auto_now_add=True)
     atualizado_em = models.DateTimeField(auto_now=True)
     operador = models.ForeignKey(CustomUser, null=True, blank=True, on_delete=models.CASCADE)
@@ -65,27 +65,39 @@ class Parente(models.Model):
 
 class Aluno(models.Model):
     nome = models.CharField(max_length=50)
-    cpf = models.CharField(max_length=11, unique=True)
+    cpf = models.CharField(max_length=15, unique=True, blank=True, null=True)
     endereco = models.CharField(max_length=50)
     bairro = models.CharField(max_length=30)
-    cep = models.CharField(max_length=8)
+    cep = models.CharField(max_length=9, blank=True)
     cidade = models.CharField(max_length=40)
     estado = models.CharField(max_length=2)
-    complemento = models.CharField(max_length=50, blank=True, null=True)
+    complemento = models.CharField(max_length=100, blank=True, null=True)
     data_nascimento = models.DateField()
     familia = models.ManyToManyField(Parente, blank=True)
     estado_civil_pais = models.CharField(max_length=3, choices=EstadosCivis.choices())
     cras = models.CharField(blank=True, null=True, max_length=30)
     escola = models.ForeignKey(Escola, on_delete=models.CASCADE)
-    periodo = models.CharField(max_length=3, choices=PeriodoEscola.choices())
-    serie = models.CharField(max_length=3, choices=SerieEscolar.choices())
-    vulnerabilidades = models.CharField(max_length=100, blank=True)
-    remedios = models.CharField(max_length=100, blank=True) 
-    info_adicionais = models.CharField(max_length=100, blank=True)
+    periodo = models.CharField(max_length=3, choices=PeriodoEscola.choices(), blank=True, null=True)
+    serie = models.CharField(max_length=3, choices=SerieEscolar.choices(), blank=True, null=True)
+    vulnerabilidades = models.CharField(max_length=150, blank=True)
+    remedios = models.CharField(max_length=100, blank=True)
+    alergias = models.CharField(max_length=100, blank=True)
+    info_adicionais = models.CharField(max_length=200, blank=True)
     ativo = models.BooleanField(default=True)
     criado_em = models.DateTimeField(auto_now_add=True)
     atualizado_em = models.DateTimeField(auto_now=True)
     operador = models.ForeignKey(CustomUser, null=True, blank=True, on_delete=models.CASCADE)
+
+    def get_student_info_display(self):
+        serie = dict(SerieEscolar.choices()).get(self.serie, 'Desconhecida')
+        periodo = dict(PeriodoEscola.choices()).get(self.periodo, 'Desconhecido')
+        return f"{serie} - {periodo}"
+    
+    def get_endereco_junto_display(self):
+        return f'{self.endereco}, {self.bairro} - {self.cidade}/{self.estado}'
+    
+    def get_estado_civil_pais_display(self):
+        return f'{dict(EstadosCivis.choices()).get(self.estado_civil_pais)}'
 
     def __str__(self):
         return self.nome

@@ -15,10 +15,10 @@ class Parentesco(BaseEnum):
     OUT = 'Outros'
 
 class EstadosCivis(BaseEnum):
-    SOL = 'Solteiro(a)'
-    CAS = 'Casado(a)'
-    DIV = 'Divorciado(a)'
-    VIU = 'Viúvo(a)'
+    SOL = 'Solteiros'
+    CAS = 'Casados'
+    DIV = 'Divorciados'
+    VIU = 'Viúvos'
     UNI = 'União Estável'
     OUT = 'Outro'
     

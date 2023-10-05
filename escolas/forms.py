@@ -6,7 +6,7 @@ from django.core.exceptions import ValidationError
 # from django.forms.utils import ErrorList
 from .enums import ESTADOS_BRASILEIROS
 from .models import CustomUser, Escola, Aluno, Parente, Atividade, Resultado
-# from django.forms.widgets import DateInput
+from django.forms.widgets import DateInput
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Row, Column, ButtonHolder, Submit
 
@@ -139,123 +139,140 @@ class EditaEscolaForm(forms.ModelForm):
         )
 
 
-# class CriaAlunoForm(forms.ModelForm):
-#     escola = forms.ModelChoiceField(
-#         queryset=Escola.objects.filter(ativo=True),
-#         empty_label="--",
-#         required=False
-#     )
-#     class Meta:
-#         model = Aluno
-#         exclude = ['operador', 'familia']
-#         widgets = {
-#             'data_nascimento': DateInput(attrs={'type': 'date'}),
-#             'info_adicionais': forms.Textarea(attrs={'rows': 2}),
-#             'estado': forms.Select(choices=ESTADOS_BRASILEIROS)
-#         }
+class CriaAlunoForm(forms.ModelForm):
+    escola = forms.ModelChoiceField(
+        queryset=Escola.objects.filter(ativo=True),
+        empty_label="--",
+        required=False
+    )
+    class Meta:
+        model = Aluno
+        exclude = ['operador', 'familia']
+        labels = {
+            'estado_civil_pais': 'Estado civil dos pais',
+            'info_adicionais': 'Informações adicionais'
+        }
+        widgets = {
+            'data_nascimento': DateInput(attrs={'type': 'date'}),
+            'vulnerabilidades': forms.Textarea(attrs={'rows': 2}),
+            'info_adicionais': forms.Textarea(attrs={'rows': 3}),
+            'estado': forms.Select(choices=ESTADOS_BRASILEIROS)
+        }
     
-#     def __init__(self, *args, **kwargs):
-#         super().__init__(*args, **kwargs)
-#         self.helper = FormHelper()
-#         self.helper.layout = Layout(
-#             Row(
-#                 Column('nome', css_class="col-md-9"),
-#                 Column('cpf', css_class="col-md-3")
-#             ),
-#             Row(
-#                 Column('endereco', css_class="col-md-4"),
-#                 Column('bairro', css_class="col-md-2"),
-#                 Column('complemento')
-#             ),
-#             Row(
-#                 Column('cep', css_class="col-md-2"),
-#                 Column('cidade', css_class="col-md-3"),
-#                 Column('estado', css_class="col-md-2"),               
-#                 Column('data_nascimento')
-#             ),
-#             Row(
-#                 Column('escola', css_class='col-md-6'),
-#                 Column('periodo', css_class='col-md-3'),
-#                 Column('serie', css_class='col-md-3'),
-#             ),
-#             Row(
-#                 Column('estado_civil_pais', css_class='col-md-3'),
-#                 Column('cras', css_class='col-md-3'),
-#                 Column('vulnerabilidades', css_class='col-md-3'),
-#                 Column('remedios', css_class='col-md-3'),
-#             ),
-#             Row(
-#                 Column('info_adicionais'),
-#             ),
-#             Row(
-#                 ButtonHolder(
-#                     Submit('submit', 'Cadastrar Aluno', ),
-#                 ),
-#                 css_class="justify-content-md-end pr-1"
-#             )
-#         )
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.layout = Layout(
+            Row(
+                Column('nome', css_class="col-md-8"),
+                Column('cpf', css_class="col-md-2"),    
+                Column('data_nascimento', css_class='col-md-2'),
+            ),
+            Row(
+                Column('endereco', css_class="col-md-4"),
+                Column('bairro', css_class="col-md-2"),
+                Column('cidade', css_class="col-md-2"),
+                Column('estado', css_class="col-md-2"), 
+                Column('cep', css_class="col-md-2"),  
+            ),
+            Row(        
+                Column('complemento'),
+            ),
+            Row(
+                Column('estado_civil_pais', css_class='col-md-2'),
+                Column('cras', css_class='col-md-2'),
+                Column('alergias', css_class='col-md-4'),
+                Column('remedios', css_class='col-md-4'),
+            ),
+            Row(
+                Column('escola', css_class='col-md-6'),
+                Column('periodo', css_class='col-md-3'),
+                Column('serie', css_class='col-md-3'),
+            ),
+            Row(
+                Column('vulnerabilidades'),
+            ),
+            Row(
+                Column('info_adicionais'),
+            ),
+            Row(
+                ButtonHolder(
+                    Submit('submit', 'Cadastrar Aluno', ),
+                ),
+                css_class="justify-content-md-end pr-1"
+            )
+        )
 
 
-# class EditaAlunoForm(forms.ModelForm):
-#     class Meta:
-#         model = Aluno
-#         exclude = ['operador', 'familia']
-#         widgets = {
-#             'data_nascimento': DateInput(attrs={'type': 'date'}),
-#             'info_adicionais': forms.Textarea(attrs={'rows': 2}),
-#             'estado': forms.Select(choices=ESTADOS_BRASILEIROS)
-#         }
+class EditaAlunoForm(forms.ModelForm):
+    class Meta:
+        model = Aluno
+        exclude = ['operador', 'familia']
+        labels = {
+            'estado_civil_pais': 'Estado civil dos pais',
+            'info_adicionais': 'Informações adicionais'
+        }
+        widgets = {
+            'data_nascimento': DateInput(attrs={'type': 'date'}),
+            'vulnerabilidades': forms.Textarea(attrs={'rows': 2}),
+            'info_adicionais': forms.Textarea(attrs={'rows': 2}),
+            'estado': forms.Select(choices=ESTADOS_BRASILEIROS)
+        }
     
-#     def __init__(self, *args, **kwargs):
-#         super().__init__(*args, **kwargs)
-#         self.helper = FormHelper()
-#         self.helper.layout = Layout(
-#             Row(
-#                 Column('nome', css_class="col-md-9"),
-#                 Column('cpf', css_class="col-md-3")
-#             ),
-#             Row(
-#                 Column('endereco', css_class="col-md-4"),
-#                 Column('bairro', css_class="col-md-2"),
-#                 Column('complemento')
-#             ),
-#             Row(
-#                 Column('cep', css_class="col-md-2"),
-#                 Column('cidade', css_class="col-md-3"),
-#                 Column('estado', css_class="col-md-2"),               
-#                 Column('data_nascimento')
-#             ),
-#             Row(
-#                 Column('escola', css_class='col-md-6'),
-#                 Column('periodo', css_class='col-md-3'),
-#                 Column('serie', css_class='col-md-3'),
-#             ),
-#             Row(
-#                 Column('estado_civil_pais', css_class='col-md-3'),
-#                 Column('cras', css_class='col-md-3'),
-#                 Column('vulnerabilidades', css_class='col-md-3'),
-#                 Column('remedios', css_class='col-md-3'),
-#             ),
-#             Row(
-#                 Column('info_adicionais'),
-#             ),
-#             Row(
-#                 ButtonHolder(
-#                     Submit('submit', 'Editar aluno', ),
-#                 ),
-#                 css_class="justify-content-md-end pr-1"
-#             )
-#         )
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.layout = Layout(
+            Row(
+                Column('nome', css_class="col-md-8"),
+                Column('cpf', css_class="col-md-2"),    
+                Column('data_nascimento', css_class='col-md-2'),
+            ),
+            Row(
+                Column('endereco', css_class="col-md-4"),
+                Column('bairro', css_class="col-md-2"),
+                Column('cidade', css_class="col-md-2"),
+                Column('estado', css_class="col-md-2"), 
+                Column('cep', css_class="col-md-2"),  
+            ),
+            Row(        
+                Column('complemento'),
+            ),
+            Row(
+                Column('estado_civil_pais', css_class='col-md-2'),
+                Column('cras', css_class='col-md-2'),
+                Column('alergias', css_class='col-md-4'),
+                Column('remedios', css_class='col-md-4'),
+            ),
+            Row(
+                Column('escola', css_class='col-md-6'),
+                Column('periodo', css_class='col-md-3'),
+                Column('serie', css_class='col-md-3'),
+            ),
+            Row(
+                Column('vulnerabilidades'),
+                Column('info_adicionais'),
+            ),
+            Row(
+                ButtonHolder(
+                    Submit('submit', 'Editar aluno', ),
+                ),
+                css_class="justify-content-md-end pr-1"
+            )
+        )
 
 
-# class ListAlunosFilter(forms.Form):
-#     escola = forms.ChoiceField(choices=[('', '--')] + [(escola.id, escola.nome) for escola in Escola.objects.filter(ativo=True)], required=False)
+class ListAlunosFilter(forms.Form):
+    escola = forms.ChoiceField(choices=[('', '--')] + [(escola.id, escola.nome) for escola in Escola.objects.filter(ativo=True)], required=False)
 
 
-# class CriaParenteForm(forms.ModelForm):
-#     class Meta:
-#         model = Parente
-#         exclude = ['operador']
+class CriaParenteForm(forms.ModelForm):
+    class Meta:
+        model = Parente
+        exclude = ['operador']
+        labels = {
+            'principal_responsavel': 'Principal Responsável'
+        }
 
  
 # class ListEventosFilter(forms.Form):

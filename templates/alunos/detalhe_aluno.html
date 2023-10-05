@@ -7,13 +7,26 @@
     </div>
     <div class="card-body">
         <h2 class="py-4 card-title">{{ aluno.nome }}</h2>
-        
-        <p class="card-text"><strong>Endereço:</strong> {{ aluno.endereco }}</p>
-        <p class="card-text"><strong>Bairro:</strong> {{ aluno.bairro }}</p>
-        <p class="card-text"><strong>Cidade:</strong> {{ aluno.cidade }}</p>
-        <p class="card-text"><strong>Estado:</strong> {{ aluno.estado }}</p>
-        <p class="card-text"><strong>Nascimento:</strong> {{ aluno.data_nascimento }}</p>
-        <p class="card-text"><strong>Escola:</strong> {{ aluno.escola }}</p>
+        <div class="row">
+            <div class="col-md-6">                
+                {% if aluno.cpf %}
+                    <p class="card-text"><strong>CPF:</strong> {{ aluno.cpf }}</p>
+                {% endif %}
+                <p class="card-text"><strong>Nascimento:</strong> {{ aluno.data_nascimento }}</p>
+                <p class="card-text"><strong>Endereço:</strong> {{ aluno.get_endereco_junto_display }}</p>
+                <p class="card-text"><strong>Complemento:</strong> {{ aluno.complemento }}</p>
+                <p class="card-text"><strong>Escola:</strong> {{ aluno.escola }}</p>
+                <p class="card-text"><strong>Serie; Periodo:</strong> {{ aluno.get_student_info_display }}</p>
+            </div>
+            <div class="col-md-6">
+                <p class="card-text"><strong>Estado civil dos pais:</strong> {{ aluno.get_estado_civil_pais_display }}</p>
+                <p class="card-text"><strong>CRAS:</strong> {{ aluno.cras }}</p>
+                <p class="card-text"><strong>Vulnerabilidades:</strong> {{ aluno.vulnerabilidades }}</p>
+                <p class="card-text"><strong>Informações adicionais:</strong> {{ aluno.info_adicionais }}</p>
+                <p class="card-text"><strong>Remédios:</strong> {{ aluno.remedios }}</p>
+                <p class="card-text"><strong>Alergias:</strong> {{ aluno.alergias }}</p>
+            </div>
+        </div>
         <a href="{% url 'escolas:edita_aluno' aluno.id %}" class="mt-5 btn btn-primary">
             Editar
         </a>

@@ -1,15 +1,15 @@
 {% extends 'homepage.html' %}
 
 {% block content %}
+    {% load static %}
     <div class="container">
         
         {% load crispy_forms_tags %}      
-        <h4>Cadastro de aluno</h4>
+        <h4>CADASTRO DE ALUNO</h4>
         <form action="{% url 'escolas:cria_aluno' %}" method="post">
             {% csrf_token %}
             {% crispy form %}
         </form>
-    </div>
     </div>
 
 {% endblock %}

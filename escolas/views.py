@@ -1,4 +1,4 @@
-# import datetime, csv
+import datetime, csv
 # from typing import Any, Dict
 # from django.db.models.query import QuerySet
 # from django.forms.models import BaseModelForm
@@ -15,10 +15,10 @@ from .forms import (
     CriaEscolaForm, 
     EditaEscolaForm, 
     
-#     ListAlunosFilter, 
-#     CriaAlunoForm,
-#     EditaAlunoForm,
-#     CriaParenteForm, 
+    ListAlunosFilter, 
+    CriaAlunoForm,
+    EditaAlunoForm,
+    CriaParenteForm, 
 
 #     # ListEventosFilter, 
 
@@ -126,131 +126,131 @@ class EscolaDesativaView(LoginRequiredMixin, View):
         return redirect(redirect_url) 
 
 
-# ### Aluno
-# class DetalheAlunoView(LoginRequiredMixin, DetailView):
-#     model = Aluno
-#     template_name = 'alunos/detalhe_aluno.html'
-#     context_object_name = 'aluno'
+### Aluno
+class DetalheAlunoView(LoginRequiredMixin, DetailView):
+    model = Aluno
+    template_name = 'alunos/detalhe_aluno.html'
+    context_object_name = 'aluno'
 
-#     def get_context_data(self, **kwargs: Any) -> Dict[str, Any]:
-#         context = super().get_context_data(**kwargs)
-#         context['parente_form'] = CriaParenteForm()
-#         return context
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['parente_form'] = CriaParenteForm()
+        return context
 
-# class ListaAlunosView(LoginRequiredMixin, TemplateView):
-#     model = Aluno
-#     template_name = 'alunos/lista_alunos.html'
-#     form_class = ListAlunosFilter
+class ListaAlunosView(LoginRequiredMixin, TemplateView):
+    model = Aluno
+    template_name = 'alunos/lista_alunos.html'
+    form_class = ListAlunosFilter
 
-#     def get_context_data(self, **kwargs):
-#         context = super().get_context_data(**kwargs)
-#         context['form'] = self.form_class(self.request.GET)
-#         context['alunos'] = self.model.objects.filter(
-#             ativo=True
-#         ).order_by('nome')
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['form'] = self.form_class(self.request.GET)
+        context['alunos'] = self.model.objects.filter(
+            ativo=True
+        ).order_by('nome')
 
-#         if escola_id := self.request.GET.get('escola'):
-#             context['alunos'] = self.model.objects.filter(escola__id=escola_id)
+        if escola_id := self.request.GET.get('escola'):
+            context['alunos'] = self.model.objects.filter(escola__id=escola_id)
         
-#         alunos_info = []
-#         for aluno in context['alunos']:
-#             alunos_info.append(
-#                 {
-#                     'id': aluno.id,
-#                     'nome': aluno.nome,
-#                     'escola': aluno.escola,
-#                     'idade': self.get_idade(aluno.data_nascimento),
-#                 })
+        alunos_info = []
+        for aluno in context['alunos']:
+            alunos_info.append(
+                {
+                    'id': aluno.id,
+                    'nome': aluno.nome,
+                    'escola': aluno.escola,
+                    'idade': self.get_idade(aluno.data_nascimento),
+                })
         
-#         context['alunos'] = alunos_info
-#         return context
+        context['alunos'] = alunos_info
+        return context
     
-#     def get_idade(self, data_nascimento):
-#         data_atual = datetime.date.today()
+    def get_idade(self, data_nascimento):
+        data_atual = datetime.date.today()
 
-#         idade = data_atual.year - data_nascimento.year - ((data_atual.month, data_atual.day) < (data_nascimento.month, data_nascimento.day))
+        idade = data_atual.year - data_nascimento.year - ((data_atual.month, data_atual.day) < (data_nascimento.month, data_nascimento.day))
 
-#         return idade
+        return idade
 
-# class AlunoCreateView(LoginRequiredMixin, CreateView):
-#     model = Aluno
-#     form_class = CriaAlunoForm
-#     template_name = 'alunos/cria_aluno.html'
+class AlunoCreateView(LoginRequiredMixin, CreateView):
+    model = Aluno
+    form_class = CriaAlunoForm
+    template_name = 'alunos/cria_aluno.html'
 
-#     def get_initial(self):
-#         initial = super().get_initial()
-#         if escola_param := self.request.GET.get('escola', None):
-#             initial['escola'] = escola_param
-#         return initial
+    def get_initial(self):
+        initial = super().get_initial()
+        if escola_param := self.request.GET.get('escola', None):
+            initial['escola'] = escola_param
+        return initial
     
-#     def get_success_url(self):
-#         aluno_id = self.object.pk
-#         success_url = reverse('escolas:aluno', kwargs={'pk': aluno_id})
-#         return success_url
+    def get_success_url(self):
+        aluno_id = self.object.pk
+        success_url = reverse('escolas:aluno', kwargs={'pk': aluno_id})
+        return success_url
 
-#     def form_valid(self, form):
-#         form.instance.operador = self.request.user
-#         form.instance.ativo = True
-#         return super().form_valid(form)
+    def form_valid(self, form):
+        form.instance.operador = self.request.user
+        form.instance.ativo = True
+        return super().form_valid(form)
 
-# class AlunoUpdateView(LoginRequiredMixin, UpdateView):
-#     model = Aluno
-#     form_class = EditaAlunoForm
-#     template_name = 'alunos/edita_aluno.html'
+class AlunoUpdateView(LoginRequiredMixin, UpdateView):
+    model = Aluno
+    form_class = EditaAlunoForm
+    template_name = 'alunos/edita_aluno.html'
     
-#     def get_success_url(self) -> str:
-#         return reverse('escolas:aluno', args=[self.object.pk])
+    def get_success_url(self) -> str:
+        return reverse('escolas:aluno', args=[self.object.pk])
 
-#     def form_valid(self, form):
-#         form.instance.operador = self.request.user
-#         return super().form_valid(form)
+    def form_valid(self, form):
+        form.instance.operador = self.request.user
+        return super().form_valid(form)
 
-# class AlunoDesativaView(LoginRequiredMixin, View):
-#     model = Aluno
+class AlunoDesativaView(LoginRequiredMixin, View):
+    model = Aluno
     
-#     def get(self, request, pk):
-#         objeto = get_object_or_404(self.model, pk=pk)
-#         objeto.ativo = False
-#         objeto.save()
-#         redirect_url = reverse('escolas:alunos')
-#         return redirect(redirect_url) 
+    def get(self, request, pk):
+        objeto = get_object_or_404(self.model, pk=pk)
+        objeto.ativo = False
+        objeto.save()
+        redirect_url = reverse('escolas:alunos')
+        return redirect(redirect_url) 
 
-# ### Parente
-# class ParenteCreateView(LoginRequiredMixin, CreateView):
-#     model = Parente
-#     form_class = CriaParenteForm
-#     template_name = 'alunos/cria_parente.html'
+### Parente
+class ParenteCreateView(LoginRequiredMixin, CreateView):
+    model = Parente
+    form_class = CriaParenteForm
+    template_name = 'alunos/cria_parente.html'
 
-#     def get_context_data(self, **kwargs: Any) -> Dict[str, Any]:
-#         context = super().get_context_data(**kwargs)
-#         context['aluno_id'] = self.kwargs.get('aluno_id')
-#         return context
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['aluno_id'] = self.kwargs.get('aluno_id')
+        return context
     
-#     def get_success_url(self):
-#         aluno_id = self.kwargs.get('aluno_id')
-#         success_url = reverse_lazy('escolas:aluno', kwargs={'pk': aluno_id})
-#         return success_url
+    def get_success_url(self):
+        aluno_id = self.kwargs.get('aluno_id')
+        success_url = reverse_lazy('escolas:aluno', kwargs={'pk': aluno_id})
+        return success_url
 
-#     def form_valid(self, form):
-#         form.instance.operador = self.request.user
-#         parente = form.save()
-#         aluno = Aluno.objects.get(pk=self.kwargs.get('aluno_id'))
-#         aluno.familia.add(parente)
-#         aluno.save()
-#         return super().form_valid(form)
+    def form_valid(self, form):
+        form.instance.operador = self.request.user
+        parente = form.save()
+        aluno = Aluno.objects.get(pk=self.kwargs.get('aluno_id'))
+        aluno.familia.add(parente)
+        aluno.save()
+        return super().form_valid(form)
 
-# class DetalheParenteView(LoginRequiredMixin, DetailView):
-#     model = Parente
-#     template_name = 'alunos/detalhe_parente.html'
-#     context_object_name = 'parente'
+class DetalheParenteView(LoginRequiredMixin, DetailView):
+    model = Parente
+    template_name = 'alunos/detalhe_parente.html'
+    context_object_name = 'parente'
 
-#     def get_context_data(self, **kwargs):
-#         context = super().get_context_data(**kwargs)
-#         aluno_id = self.kwargs.get('aluno_id')
-#         aluno = Aluno.objects.get(pk=aluno_id)
-#         context['aluno'] = aluno.nome
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        aluno_id = self.kwargs.get('aluno_id')
+        aluno = Aluno.objects.get(pk=aluno_id)
+        context['aluno'] = aluno.nome
 
-#         return context
+        return context
 
 
 # ### Evento

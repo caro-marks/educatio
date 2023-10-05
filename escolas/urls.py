@@ -16,15 +16,15 @@ from .views import (
     EscolaUpdateView,
     EscolaDesativaView,
 
-#     # alunos
-#     DetalheAlunoView,
-#     ListaAlunosView,
-#     AlunoCreateView,
-#     AlunoUpdateView,
-#     AlunoDesativaView,
-#     # # parente
-#     ParenteCreateView,
-#     DetalheParenteView,
+    # alunos
+    DetalheAlunoView,
+    ListaAlunosView,
+    AlunoCreateView,
+    AlunoUpdateView,
+    AlunoDesativaView,
+    # # parente
+    ParenteCreateView,
+    DetalheParenteView,
 
 #     # eventos
 #     ListaEventosView,
@@ -60,16 +60,16 @@ urlpatterns = [
     path('escola/<int:pk>/edita', EscolaUpdateView.as_view(), name='edita_escola'),
     path('escola/<int:pk>/desativa', EscolaDesativaView.as_view(), name='desativa_escola'),
 
-#     # aluno
-#     path('alunos/', ListaAlunosView.as_view(), name='alunos'),
-#     path('aluno/novo/', AlunoCreateView.as_view(), name='cria_aluno'),
-#     path('aluno/<int:pk>/', DetalheAlunoView.as_view(), name='aluno'),
-#     path('aluno/<int:pk>/edita', AlunoUpdateView.as_view(), name='edita_aluno'),
-#     path('aluno/<int:pk>/desativa', AlunoDesativaView.as_view(), name='desativa_aluno'),
+    # aluno
+    path('alunos/', ListaAlunosView.as_view(), name='alunos'),
+    path('aluno/novo/', AlunoCreateView.as_view(), name='cria_aluno'),
+    path('aluno/<int:pk>/', DetalheAlunoView.as_view(), name='aluno'),
+    path('aluno/<int:pk>/edita', AlunoUpdateView.as_view(), name='edita_aluno'),
+    path('aluno/<int:pk>/desativa', AlunoDesativaView.as_view(), name='desativa_aluno'),
 
-#     # parente
-#     path('aluno/<int:aluno_id>/parente/novo/', ParenteCreateView.as_view(), name='cria_parente'),
-#     path('aluno/<int:aluno_id>/parente/<int:pk>/', DetalheParenteView.as_view(), name='parente'),
+    # parente
+    path('aluno/<int:aluno_id>/parente/novo/', ParenteCreateView.as_view(), name='cria_parente'),
+    path('aluno/<int:aluno_id>/parente/<int:pk>/', DetalheParenteView.as_view(), name='parente'),
 
 #     # # evento
 #     path('eventos/', ListaEventosView.as_view(), name='eventos'),
