@@ -139,7 +139,7 @@ class EditaEscolaForm(forms.ModelForm):
         )
 
 
-class CriaAlunoForm(forms.ModelForm):
+class CriaAlunoForm(forms.ModelForm):   
     escola = forms.ModelChoiceField(
         queryset=Escola.objects.filter(ativo=True),
         empty_label="--",
@@ -150,7 +150,8 @@ class CriaAlunoForm(forms.ModelForm):
         exclude = ['operador', 'familia']
         labels = {
             'estado_civil_pais': 'Estado civil dos pais',
-            'info_adicionais': 'Informações adicionais'
+            'info_adicionais': 'Informações adicionais',
+            'data_nascimento': 'Data Nasc.'
         }
         widgets = {
             'data_nascimento': DateInput(attrs={'type': 'date'}),
@@ -205,6 +206,7 @@ class CriaAlunoForm(forms.ModelForm):
 
 
 class EditaAlunoForm(forms.ModelForm):
+    data_nascimento = forms.DateField(required=False)
     class Meta:
         model = Aluno
         exclude = ['operador', 'familia']
@@ -267,6 +269,15 @@ class ListAlunosFilter(forms.Form):
 
 
 class CriaParenteForm(forms.ModelForm):
+    class Meta:
+        model = Parente
+        exclude = ['operador']
+        labels = {
+            'principal_responsavel': 'Principal Responsável'
+        }
+
+
+class EditaParenteForm(forms.ModelForm):
     class Meta:
         model = Parente
         exclude = ['operador']

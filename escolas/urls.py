@@ -25,6 +25,7 @@ from .views import (
     # # parente
     ParenteCreateView,
     DetalheParenteView,
+    ParenteUpdateView
 
 #     # eventos
 #     ListaEventosView,
@@ -70,6 +71,7 @@ urlpatterns = [
     # parente
     path('aluno/<int:aluno_id>/parente/novo/', ParenteCreateView.as_view(), name='cria_parente'),
     path('aluno/<int:aluno_id>/parente/<int:pk>/', DetalheParenteView.as_view(), name='parente'),
+    path('aluno/<int:aluno_id>/parente/<int:pk>/edita/', ParenteUpdateView.as_view(), name='edita_parente'),
 
 #     # # evento
 #     path('eventos/', ListaEventosView.as_view(), name='eventos'),

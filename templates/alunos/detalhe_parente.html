@@ -14,10 +14,12 @@
                 {{ parente.get_grau_parentesco_display }}
             </strong> de {{ aluno }}
         </p>
-        <p class="card-text"><strong>Idade:</strong> {{ parente.idade }}</p>
-        <p class="card-text"><strong>Principal responsavel:</strong>{% if parente.principal_responsavel %} Sim {% else %} Não {% endif %}</p>
-        <p class="card-text"><strong>Informações adicionais:</strong> {{ parente.info_adicionais }}</p>
-        <a href="#" class="mt-5 btn btn-primary">
+
+        <p class="card-text"><strong>Principal responsavel: </strong>{% if parente.principal_responsavel %} Sim {% else %} Não {% endif %}</p>
+        <p class="card-text"><strong>Telefone: </strong>{{ parente.telefone }}</p>
+        <p class="card-text"><strong>Email: </strong>{{ parente.email }}</p>
+        <p class="card-text"><strong>Informações adicionais: </strong> {{ parente.info_adicionais }}</p>
+        <a href="{% url 'escolas:edita_parente' aluno_id=aluno_id pk=parente.id %}" class="mt-5 btn btn-primary">
             Editar
         </a>
     </div>

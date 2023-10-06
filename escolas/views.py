@@ -1,4 +1,5 @@
 import datetime, csv
+from typing import Any
 # from typing import Any, Dict
 # from django.db.models.query import QuerySet
 # from django.forms.models import BaseModelForm
@@ -18,7 +19,8 @@ from .forms import (
     ListAlunosFilter, 
     CriaAlunoForm,
     EditaAlunoForm,
-    CriaParenteForm, 
+    CriaParenteForm,
+    EditaParenteForm,
 
 #     # ListEventosFilter, 
 
@@ -248,10 +250,24 @@ class DetalheParenteView(LoginRequiredMixin, DetailView):
         context = super().get_context_data(**kwargs)
         aluno_id = self.kwargs.get('aluno_id')
         aluno = Aluno.objects.get(pk=aluno_id)
+        context['aluno_id'] = aluno_id
         context['aluno'] = aluno.nome
 
         return context
+    
+class ParenteUpdateView(LoginRequiredMixin, UpdateView):
+    model = Parente
+    form_class = EditaParenteForm
+    template_name = 'alunos/edita_parente.html'
+    
+    def get_success_url(self) -> str:
+        aluno_id = self.kwargs.get('aluno_id')
+        reverse_url = reverse('escolas:parente', args=[aluno_id, self.object.pk])
+        return reverse_url
 
+    def form_valid(self, form):
+        form.instance.operador = self.request.user
+        return super().form_valid(form)
 
 # ### Evento
 # class ListaEventosView(LoginRequiredMixin, ListView):

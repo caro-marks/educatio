@@ -1,0 +1,17 @@
+{% extends 'homepage.html' %}
+
+{% block content %}
+    {% load static %}
+    <div class="container">
+        {% load crispy_forms_tags %}    
+        <h4>      
+            Atualização de parente
+        </h4>
+        <form method="post">
+            {% csrf_token %}
+            {{ form|crispy }}
+            <button class="custom-button" type="submit">Atualizar Parente</button>
+        </form>
+    </div>
+
+{% endblock %}

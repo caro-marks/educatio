@@ -74,7 +74,7 @@ class Aluno(models.Model):
     complemento = models.CharField(max_length=100, blank=True, null=True)
     data_nascimento = models.DateField()
     familia = models.ManyToManyField(Parente, blank=True)
-    estado_civil_pais = models.CharField(max_length=3, choices=EstadosCivis.choices())
+    estado_civil_pais = models.CharField(max_length=3, choices=EstadosCivis.choices(), blank=True, null=True)
     cras = models.CharField(blank=True, null=True, max_length=30)
     escola = models.ForeignKey(Escola, on_delete=models.CASCADE)
     periodo = models.CharField(max_length=3, choices=PeriodoEscola.choices(), blank=True, null=True)
