@@ -25,12 +25,14 @@ from .views import (
     # # parente
     ParenteCreateView,
     DetalheParenteView,
-    ParenteUpdateView
+    ParenteUpdateView,
 
-#     # eventos
-#     ListaEventosView,
-#     CriaEventoView,
-#     CriaTipoEventoView,
+    # atividades
+    ListaAtividadeView,
+    CriaAtividadeView,
+    DetalheAtividadeView,
+    EditaAtividadeView,
+    RemoveAtividadeView,
 
 #     # notas
 #     ListaNotasEventoView,
@@ -73,10 +75,12 @@ urlpatterns = [
     path('aluno/<int:aluno_id>/parente/<int:pk>/', DetalheParenteView.as_view(), name='parente'),
     path('aluno/<int:aluno_id>/parente/<int:pk>/edita/', ParenteUpdateView.as_view(), name='edita_parente'),
 
-#     # # evento
-#     path('eventos/', ListaEventosView.as_view(), name='eventos'),
-#     path('evento/novo/', CriaEventoView.as_view(), name='cria_evento'),
-#     path('cria_tipo_evento/', CriaTipoEventoView.as_view(), name='cria_tipo_evento'),
+    # # atividade
+    path('atividades/', ListaAtividadeView.as_view(), name='atividades'),
+    path('atividade/nova/', CriaAtividadeView.as_view(), name='cria_atividade'),
+    path('atividade/<int:pk>/', DetalheAtividadeView.as_view(), name='atividade'),
+    path('atividade/<int:pk>/edita/', EditaAtividadeView.as_view(), name='edita_atividade'),
+    path('atividade/<int:pk>/remove/', RemoveAtividadeView.as_view(), name='remove_atividade'),
 
 #     # # nota evento
 #     path('notas_evento/', ListaNotasEventoView.as_view(), name='notas_evento'),

@@ -1,9 +1,8 @@
 import datetime, csv
-from typing import Any
 # from typing import Any, Dict
 # from django.db.models.query import QuerySet
 # from django.forms.models import BaseModelForm
-from django.views.generic import ListView, DetailView, TemplateView, View, CreateView, UpdateView
+from django.views.generic import ListView, DetailView, TemplateView, View, CreateView, UpdateView, DeleteView
 from .models import CustomUser, Escola, Aluno, Parente, Atividade, Resultado
 from django.contrib.auth.models import Group
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -22,10 +21,8 @@ from .forms import (
     CriaParenteForm,
     EditaParenteForm,
 
-#     # ListEventosFilter, 
-
-#     CriaEventoForm, 
-#     CriaTipoEventoForm, 
+    CriaAtividadeForm,
+    EditaAtividadeForm,
     
 #     ListNotasEventoFilter, 
 #     AvaliarEventoForm,
@@ -118,7 +115,6 @@ class EscolaUpdateView(LoginRequiredMixin, UpdateView):
     
 class EscolaDesativaView(LoginRequiredMixin, View):
     model = Escola
-    # success_url ='/escolas/'
     
     def get(self, request, pk):
         objeto = get_object_or_404(self.model, pk=pk)
@@ -152,7 +148,7 @@ class ListaAlunosView(LoginRequiredMixin, TemplateView):
         ).order_by('nome')
 
         if escola_id := self.request.GET.get('escola'):
-            context['alunos'] = self.model.objects.filter(escola__id=escola_id)
+            context['alunos'] = context['alunos'].filter(escola__id=escola_id)
         
         alunos_info = []
         for aluno in context['alunos']:
@@ -193,6 +189,8 @@ class AlunoCreateView(LoginRequiredMixin, CreateView):
     def form_valid(self, form):
         form.instance.operador = self.request.user
         form.instance.ativo = True
+        print(f'form: {form}')
+        print(f'form instance: {form.instance}')
         return super().form_valid(form)
 
 class AlunoUpdateView(LoginRequiredMixin, UpdateView):
@@ -269,69 +267,54 @@ class ParenteUpdateView(LoginRequiredMixin, UpdateView):
         form.instance.operador = self.request.user
         return super().form_valid(form)
 
-# ### Evento
-# class ListaEventosView(LoginRequiredMixin, ListView):
-#     model = Evento
-#     template_name = 'eventos/lista_eventos.html'
-#     context_object_name = 'eventos'
-#     # form_class = ListEventosFilter
+### Atividade
+class ListaAtividadeView(LoginRequiredMixin, ListView):
+    model = Atividade
+    template_name = 'atividades/lista_atividades.html'
+    context_object_name = 'atividades'
 
-#     def get_context_data(self, **kwargs: Any) -> Dict[str, Any]:
-#         context = super().get_context_data(**kwargs)
-#         # context['form'] = self.form_class(self.request.GET)
+    def get_queryset(self):            
+        return super().get_queryset().order_by('descricao', 'escola', 'peso')
 
-#         # if escola_id := self.request.GET.get('escola'):
-#         #     context['eventos'] = self.model.objects.filter(escola__id=escola_id).order_by('descricao', 'tipo_evento', 'escola')
-        
-#         return context
-
-#     def get_queryset(self):
-#         queryset = super().get_queryset()
-#         # form = self.form_class(self.request.GET)
-#         # if form.is_valid():
-            
-#         #     if data_inicio := form.cleaned_data.get('data_inicio'):
-#         #         queryset = queryset.filter(data__gte=data_inicio)
-#         #     if data_fim := form.cleaned_data.get('data_fim'):
-#         #         queryset = queryset.filter(data__lte=data_fim)
-            
-#         return queryset.order_by('descricao', 'tipo_evento','escola')
-
-# class CriaEventoView(LoginRequiredMixin, CreateView):
-#     model = Evento
-#     template_name = 'eventos/cria_evento.html'
-#     form_class = CriaEventoForm
+class CriaAtividadeView(LoginRequiredMixin, CreateView):
+    model = Atividade
+    template_name = 'atividades/cria_atividade.html'
+    form_class = CriaAtividadeForm
     
-#     def get_success_url(self):
-#         evento_id = self.object.pk
-#         escola = self.model.objects.get(pk=evento_id).escola
-#         url = reverse('escolas:eventos')
-#         success_url = f'{url}?escola={escola.id}'
-#         return success_url
+    def get_success_url(self):
+        atividade_id = self.object.pk
+        escola = self.model.objects.get(pk=atividade_id).escola
+        url = reverse('escolas:atividades')
+        success_url = f'{url}?escola={escola.id}'
+        return success_url
 
-#     def get_initial(self):
-#         initial = super().get_initial()
-#         if escola_param := self.request.GET.get('escola', None):
-#             initial['escola'] = escola_param
-#         return initial
+    def get_initial(self):
+        initial = super().get_initial()
+        if escola_param := self.request.GET.get('escola', None):
+            initial['escola'] = escola_param
+        return initial
 
-#     def get_context_data(self, **kwargs: Any) -> Dict[str, Any]:
-#         context =  super().get_context_data(**kwargs)
-#         context['form_tipo_evento'] = CriaTipoEventoForm()
+class DetalheAtividadeView(LoginRequiredMixin, DetailView):
+    model = Atividade
+    template_name = 'atividades/detalhe_atividade.html'
+    context_object_name = 'atividade'
 
-#         return context
+class EditaAtividadeView(LoginRequiredMixin, UpdateView):
+    model = Atividade
+    form_class = EditaAtividadeForm
+    template_name = 'atividades/edita_atividade.html'
     
-#     def form_valid(self, form: BaseModelForm) -> HttpResponse:
-#         form = super().form_valid(form)
-#         print(f'form: {form}')
-#         return form
+    def get_success_url(self) -> str:
+        return reverse('escolas:atividade', args=[self.object.pk])
 
-# class CriaTipoEventoView(LoginRequiredMixin, CreateView):
-#     model = TipoEvento
-#     template_name = 'eventos/cria_tipo_evento.html'
-#     form_class = CriaTipoEventoForm
-#     success_url = '/evento/novo/'
-
+class RemoveAtividadeView(LoginRequiredMixin, View):
+    model = Atividade
+    
+    def get(self, request, pk):
+        objeto = get_object_or_404(self.model, pk=pk)
+        objeto.ativo = False
+        objeto.delete()
+        return redirect(reverse_lazy('escolas:atividades'))
 
 # ### NotaEvento
 

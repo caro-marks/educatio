@@ -1,0 +1,17 @@
+{% extends 'homepage.html' %}
+
+{% block content %}
+    {% load static %}
+    <div class="container">
+        {% load crispy_forms_tags %}    
+        <h4>      
+            Edição de atividade
+        </h4>
+        <form method="post">
+            {% csrf_token %}
+            {{ form|crispy }}
+            <button class="custom-button" type="submit">Atualizar atividade</button>
+        </form>
+    </div>
+
+{% endblock %}

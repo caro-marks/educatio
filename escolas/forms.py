@@ -285,55 +285,36 @@ class EditaParenteForm(forms.ModelForm):
             'principal_responsavel': 'Principal Responsável'
         }
 
- 
-# class ListEventosFilter(forms.Form):
-#     data_inicio = forms.DateField(label='De', required=False, widget=forms.DateInput(attrs={'type': 'date'}))
-#     data_fim = forms.DateField(label='Até', required=False, widget=forms.DateInput(attrs={'type': 'date'}))
 
-#     def __init__(self, *args, **kwargs):
-#         super().__init__(*args, **kwargs)
-#         self.helper = FormHelper()
-#         self.helper.form_class = 'form-horizontal'  # Aplica o estilo horizontal
-#         self.helper.label_class = 'col-lg-2'  # Classe da label
-#         self.helper.field_class = 'col-lg-10'  # Classe do campo
-#         self.helper.layout = Layout(
-#             Row(
-#                 Column('data_inicio', css_class='col-md-auto mx-1'),
-#                 Column('data_fim', css_class='col-md-auto mx-1'),
-#                 Submit('submit', 'Filtrar', css_class='col-md-auto'),
-#                 css_class='align-items-start'
-#             )
-#         )
-
-
-# class CriaEventoForm(forms.ModelForm):
-#     escola = forms.ModelChoiceField(
-#         queryset=Escola.objects.filter(ativo=True),
-#         empty_label="--",
-#         required=False
-#     )
+class CriaAtividadeForm(forms.ModelForm):
+    escola = forms.ModelChoiceField(
+        queryset=Escola.objects.filter(ativo=True),
+        empty_label="--",
+        required=False
+    )
     
-#     class Meta:
-#         model = Evento
-#         fields = '__all__'
-#         labels = {
-#             'tipo_evento': 'Tipo',
-#         }
+    class Meta:
+        model = Atividade
+        fields = '__all__'
+        widgets = {
+            'data': DateInput(attrs={'type': 'date'}),
+        }
 
 
-#     def __init__(self, *args, **kwargs):
-#         super().__init__(*args, **kwargs)
-#         self.helper = FormHelper()
-#         self.helper.form_class = 'form-horizontal'  # Aplica o estilo horizontal
-#         self.helper.label_class = 'col-3'  # Classe da label
-#         self.helper.field_class = 'col-9'  # Classe do campo
+class EditaAtividadeForm(forms.ModelForm):
+    escola = forms.ModelChoiceField(
+        queryset=Escola.objects.filter(ativo=True),
+        empty_label="--",
+        required=False
+    )
+    data = forms.DateField(required=False)
 
-
-# class CriaTipoEventoForm(forms.ModelForm):
-#     class Meta:
-#         model = TipoEvento
-#         fields = '__all__'
-
+    class Meta:
+        model = Atividade
+        fields = '__all__'
+        widgets = {
+            'data': DateInput(attrs={'type': 'date'}),
+        }
 
 # class ListNotasEventoFilter(forms.Form):
 #     escola = forms.ChoiceField(choices=[('', '--')] + [(escola.id, escola.nome) for escola in Escola.objects.filter(ativo=True)], required=False)

@@ -1,7 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 from .enums import Parentesco, EstadosCivis, PeriodoEscola, SerieEscolar
-from django.core.validators import MinLengthValidator
+from django.core.validators import MinLengthValidator, MinValueValidator, MaxValueValidator
 
 # Create your models here.
 
@@ -105,7 +105,10 @@ class Aluno(models.Model):
 
 class Atividade(models.Model):
     descricao = models.CharField(max_length=100)
-    peso = models.DecimalField(max_digits=5, decimal_places=2)
+    peso = models.PositiveSmallIntegerField(validators=[
+        MinValueValidator(1, "Peso deve ser no minimo 1"),
+        MaxValueValidator(100, "Peso deve ser no maximo 100")
+    ])
     data = models.DateField()
     escola = models.ForeignKey(Escola, on_delete=models.CASCADE)
 
@@ -115,7 +118,7 @@ class Atividade(models.Model):
 
 class Resultado(models.Model):
     aluno = models.ForeignKey(Aluno, on_delete=models.CASCADE)
-    atividade = models.ForeignKey(Atividade, on_delete=models.CASCADE)
+    atividade = models.ForeignKey(Atividade, on_delete=models.CASCADE, null=True)
     nota = models.DecimalField(max_digits=5, decimal_places=2)
     observacoes = models.CharField(max_length=50)
     criado_em = models.DateTimeField(auto_now_add=True)

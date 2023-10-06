@@ -1,0 +1,23 @@
+{% extends 'homepage.html' %}
+
+{% block content %}
+    <div class="card w-75 shadow-lg">
+        <div class="card-header">
+            <h2 class="card-text">Detalhes de atividade</h2>
+        </div>
+        <div class="card-body">
+            <h2 class="py-4 card-title">{{ atividade.descricao }}</h2>
+            <p class="card-text"><strong>Peso:</strong> {{ atividade.peso }}</p>
+            <p class="card-text"><strong>Data:</strong> {{ atividade.data }}</p>
+            <p class="card-text"><strong>Escola:</strong> {{ atividade.escola }}</p>
+
+            <a href="{% url 'escolas:edita_atividade' atividade.id %}" class="mt-5 btn btn-primary">
+                Editar
+            </a>
+            <button class="mt-5 btn btn-danger" type="button" data-toggle="modal" data-target="#removeAtividadeModal">
+                Remover
+            </button>
+        </div>
+    </div>
+    {% include 'atividades/remove_atividade.html' %}
+{% endblock %}
