@@ -7,31 +7,25 @@
         <button class="custom-button my-3" type="button" data-toggle="collapse" data-target="#filterForm" aria-expanded="false" aria-controls="filterForm">
             + Filtros
         </button>
-        <a
-            href="{% url 'escolas:exportar_dados_notas' %}?escola={{ escola }}&evento={{ evento }}"
-            class="custom-button"
-        >
-            Exportar Dados
-        </a>
     </div>
     <div class="collapse py-2" id="filterForm">
-        <form action="{% url 'escolas:notas_evento' %}" method="get">
+        <form action="{% url 'escolas:resultados' %}" method="get">
             {% csrf_token %}                
             {% crispy form %}
         </form>
     </div>
 
-    <h3>Avaliações por Evento</h1>
-    <table id="notas-eventos" class="table table-striped table-bordeless mt-3" style="width:100%">
+    <h3>Resultados por Atividade</h1>
+    <table id="resultados" class="table table-striped table-bordeless mt-3" style="width:100%">
         <thead>                
             <tr>
                 <th>Aluno</th>
-                <th>{{ nota_field }}</th>
+                <th>{{ titulo }}</th>
                 <th>Escola</th>
             </tr>
         </thead>
         <tbody>            
-            {% for nota in notas %}
+            {% for nota in resultados %}
             <tr>
                 <td class="border-bottom">{{ nota.aluno }}</td>
                 <td class="border-bottom">{{ nota.resultado }}</td>

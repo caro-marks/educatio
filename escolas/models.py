@@ -119,8 +119,11 @@ class Atividade(models.Model):
 class Resultado(models.Model):
     aluno = models.ForeignKey(Aluno, on_delete=models.CASCADE)
     atividade = models.ForeignKey(Atividade, on_delete=models.CASCADE, null=True)
-    nota = models.DecimalField(max_digits=5, decimal_places=2)
-    observacoes = models.CharField(max_length=50)
+    nota = models.DecimalField(max_digits=4, decimal_places=2, validators=[
+        MinValueValidator(0, "Nota mínima é 0"),
+        MaxValueValidator(10, "Nota máxima é 10")
+    ])
+    observacoes = models.CharField(max_length=100)
     criado_em = models.DateTimeField(auto_now_add=True)
     operador = models.ForeignKey(CustomUser, null=True, blank=True, on_delete=models.CASCADE)
 

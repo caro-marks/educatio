@@ -9,6 +9,7 @@ from .models import CustomUser, Escola, Aluno, Parente, Atividade, Resultado
 from django.forms.widgets import DateInput
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Row, Column, ButtonHolder, Submit
+from django.core.validators import MinLengthValidator, MinValueValidator, MaxValueValidator
 
 class TelefoneWidget(forms.TextInput):  
     def format_value(self, value):
@@ -316,48 +317,62 @@ class EditaAtividadeForm(forms.ModelForm):
             'data': DateInput(attrs={'type': 'date'}),
         }
 
-# class ListNotasEventoFilter(forms.Form):
-#     escola = forms.ChoiceField(choices=[('', '--')] + [(escola.id, escola.nome) for escola in Escola.objects.filter(ativo=True)], required=False)
-#     evento = forms.ChoiceField(choices=[('', '--')] + [(evento.id, evento.descricao) for evento in Evento.objects.all()], required=False)
-#     data_inicio = forms.DateField(label='De', required=False, widget=forms.DateInput(attrs={'type': 'date'}))
-#     data_fim = forms.DateField(label='Até', required=False, widget=forms.DateInput(attrs={'type': 'date'}))
+class ListResultadosFilter(forms.Form):
+    escola = forms.ChoiceField(
+        choices=[('', '--')] + [(escola.id, escola.nome) for escola in Escola.objects.filter(ativo=True)],
+        required=False
+    )
+    # escola = forms.ModelChoiceField(
+    #     queryset=Escola.objects.filter(ativo=True),
+    #     empty_label="--",
+    #     required=False
+    # )
+    atividade = forms.ChoiceField(
+        choices=[('', '--')] + [(atividade.id, atividade.descricao) for atividade in Atividade.objects.all()],
+        required=False
+    )
+    data_inicio = forms.DateField(label='De', required=False, widget=forms.DateInput(attrs={'type': 'date'}))
+    data_fim = forms.DateField(label='Até', required=False, widget=forms.DateInput(attrs={'type': 'date'}))
 
-#     def __init__(self, *args, **kwargs):
-#         super().__init__(*args, **kwargs)
-#         self.helper = FormHelper()
-#         self.helper.form_class = 'form-horizontal'  # Aplica o estilo horizontal
-#         self.helper.label_class = 'col-md-2 mr-1'  # Classe da label
-#         self.helper.field_class = 'col-md-8 ml-1'  # Classe do campo
-#         self.helper.layout = Layout(
-#             Row(
-#                 Column('escola', css_class='col-md-3'),
-#                 Column('evento', css_class='col-md-3'),
-#                 Column('data_inicio', css_class='col-md-2'),
-#                 Column('data_fim', css_class='col-md-2'),
-#                 Submit('submit', 'Filtrar',),
-#                 css_class='justify-content-between align-items-start'
-#             ),
-#         )
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.form_class = 'form-horizontal'  # Aplica o estilo horizontal
+        self.helper.label_class = 'col-md-2 mr-1'  # Classe da label
+        self.helper.field_class = 'col-md-8 ml-1'  # Classe do campo
+        self.helper.layout = Layout(
+            Row(
+                Column('escola', css_class='col-md-3'),
+                Column('atividade', css_class='col-md-3'),
+                Column('data_inicio', css_class='col-md-2'),
+                Column('data_fim', css_class='col-md-2'),
+                Submit('submit', 'Filtrar',),
+                css_class='justify-content-between align-items-start'
+            ),
+        )
 
 
-# class AvaliarEventoForm(forms.Form):
-#     nota = forms.DecimalField(label='Nota', max_digits=5, decimal_places=2)
+class AvaliarAtividadeForm(forms.Form):
+    nota = forms.DecimalField(label='Nota', max_digits=4, decimal_places=2, validators=[
+        MinValueValidator(0, "Nota mínima é 0"),
+        MaxValueValidator(10, "Nota máxima é 10")
+    ])
 
-#     def __init__(self, *args, **kwargs):
-#         super(AvaliarEventoForm, self).__init__(*args, **kwargs)
+    def __init__(self, *args, **kwargs):
+        super(AvaliarAtividadeForm, self).__init__(*args, **kwargs)
         
-#         # Crie um objeto helper para personalizar o layout
-#         self.helper = FormHelper()
-#         self.helper.form_class = 'form-horizontal'  # Aplica o estilo horizontal
-#         self.helper.label_class = 'col-lg-2'  # Classe da label
-#         self.helper.field_class = 'col-lg-10'  # Classe do campo
+        # Crie um objeto helper para personalizar o layout
+        self.helper = FormHelper()
+        self.helper.form_class = 'form-horizontal'  # Aplica o estilo horizontal
+        self.helper.label_class = 'col-lg-2'  # Classe da label
+        self.helper.field_class = 'col-lg-10'  # Classe do campo
 
-#         # Defina o layout dos campos
-#         self.helper.layout = Layout(
-#             Row(
-#                 Column('nota', css_class='col-md-8'),
-#                 Submit('submit', 'Avaliar',),
-#                 css_class='align-items-start'
-#             )
-#         )
+        # Defina o layout dos campos
+        self.helper.layout = Layout(
+            Row(
+                Column('nota', css_class='col-md-8'),
+                Submit('submit', 'Avaliar',),
+                css_class='align-items-start'
+            )
+        )
 

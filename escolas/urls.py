@@ -34,10 +34,10 @@ from .views import (
     EditaAtividadeView,
     RemoveAtividadeView,
 
-#     # notas
-#     ListaNotasEventoView,
-#     ListaNotasAlunoView,
-#     AlunosSemNotasListView,
+    # notas
+    ListaResultadosView,
+    ListaResultadosAlunoView,
+    AlunosSemNotasListView,
 #     CriarNotaView,
 #     ListaNotasAlunosEventoView,
 
@@ -82,12 +82,12 @@ urlpatterns = [
     path('atividade/<int:pk>/edita/', EditaAtividadeView.as_view(), name='edita_atividade'),
     path('atividade/<int:pk>/remove/', RemoveAtividadeView.as_view(), name='remove_atividade'),
 
-#     # # nota evento
-#     path('notas_evento/', ListaNotasEventoView.as_view(), name='notas_evento'),
-#     path('notas_evento/aluno/<int:aluno_id>/', ListaNotasAlunoView.as_view(), name='notas_aluno'),
-#     path('notas_evento/evento/<int:evento_id>/alunos_sem_notas', AlunosSemNotasListView.as_view(), name='alunos_sem_notas'),
-#     path('notas_evento/evento/<int:evento_id>/aluno/<int:aluno_id>/', CriarNotaView.as_view(), name='criar_nota_aluno'),
-#     path('notas_evento/evento/<int:evento_id>/alunos_com_notas', ListaNotasAlunosEventoView.as_view(), name='alunos_com_notas'),
+    # # nota evento
+    path('resultados/', ListaResultadosView.as_view(), name='resultados'),
+    path('resultados/aluno/<int:aluno_id>/', ListaResultadosAlunoView.as_view(), name='resultados_aluno'),
+    path('resultados/atividade/<int:atividade_id>/alunos_sem_notas', AlunosSemNotasListView.as_view(), name='alunos_sem_notas'),
+#     path('resultados/atividade/<int:atividade_id>/aluno/<int:aluno_id>/', CriarNotaView.as_view(), name='avaliar_aluno'),
+#     path('resultados/atividade/<int:atividade_id>/alunos_com_notas', ListaNotasAlunosEventoView.as_view(), name='alunos_com_notas'),
 
 #     # # dados
 #     path('exportar_dados_notas/', ExportarDadosNotas.as_view(), name='exportar_dados_notas')
