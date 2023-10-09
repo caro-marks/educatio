@@ -318,18 +318,17 @@ class EditaAtividadeForm(forms.ModelForm):
         }
 
 class ListResultadosFilter(forms.Form):
-    escola = forms.ChoiceField(
-        choices=[('', '--')] + [(escola.id, escola.nome) for escola in Escola.objects.filter(ativo=True)],
-        required=False
+    escola = forms.ModelChoiceField(
+        queryset=Escola.objects.filter(ativo=True),
+        empty_label="--",
+        required=False,
+        widget=forms.Select(attrs={'id': 'escola-select'})
     )
-    # escola = forms.ModelChoiceField(
-    #     queryset=Escola.objects.filter(ativo=True),
-    #     empty_label="--",
-    #     required=False
-    # )
-    atividade = forms.ChoiceField(
-        choices=[('', '--')] + [(atividade.id, atividade.descricao) for atividade in Atividade.objects.all()],
-        required=False
+    atividade = forms.ModelChoiceField(
+        queryset=Atividade.objects.all(),
+        empty_label="--",
+        required=False,
+        widget=forms.Select(attrs={'id': 'atividade-select'})
     )
     data_inicio = forms.DateField(label='De', required=False, widget=forms.DateInput(attrs={'type': 'date'}))
     data_fim = forms.DateField(label='Até', required=False, widget=forms.DateInput(attrs={'type': 'date'}))
@@ -337,13 +336,10 @@ class ListResultadosFilter(forms.Form):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.helper = FormHelper()
-        self.helper.form_class = 'form-horizontal'  # Aplica o estilo horizontal
-        self.helper.label_class = 'col-md-2 mr-1'  # Classe da label
-        self.helper.field_class = 'col-md-8 ml-1'  # Classe do campo
         self.helper.layout = Layout(
             Row(
-                Column('escola', css_class='col-md-3'),
-                Column('atividade', css_class='col-md-3'),
+                Column('escola', css_class='col-md-4'),
+                Column('atividade', css_class='col-md-4'),
                 Column('data_inicio', css_class='col-md-2'),
                 Column('data_fim', css_class='col-md-2'),
                 Submit('submit', 'Filtrar',),

@@ -12,6 +12,7 @@
         <thead>                
             <tr>
                 <th>Atividade</th>
+                <th>Data</th>
                 <th>Nota</th>
             </tr>
         </thead>
@@ -19,6 +20,7 @@
             {% for resultado_atividade in resultados %}
             <tr>
                 <td class="border-bottom">{{ resultado_atividade.atividade }}</td>
+                <td class="border-bottom">{{ resultado_atividade.atividade.data }}</td>
                 <td class="border-bottom">{{ resultado_atividade.nota }}</td>
             </tr>
             {% endfor %}

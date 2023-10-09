@@ -113,7 +113,7 @@ class Atividade(models.Model):
     escola = models.ForeignKey(Escola, on_delete=models.CASCADE)
 
     def __str__(self):
-        return f'{self.escola} - {self.descricao} / {self.data}'
+        return f'{self.escola} - {self.descricao}'
 
 
 class Resultado(models.Model):

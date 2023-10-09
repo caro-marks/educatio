@@ -358,12 +358,11 @@ def get_notas(resultados):
     return sorted(
         notas,
         key=lambda media: (-media['resultado'], media['aluno']),
-        # reverse=(True, False)
     )
 
 
 def get_resultados(escola_id, atividade_id, data_inicio, data_fim):
-    titulo = 'Media' if atividade_id else 'Resultado'
+    titulo = 'Media' if not atividade_id else 'Resultado'
     
     if escola_id:
         resultados = Resultado.objects.filter(atividade__escola_id=escola_id)
@@ -489,16 +488,16 @@ class CriarNotaView(LoginRequiredMixin, View):
         redirect_url = reverse('escolas:alunos_sem_notas', kwargs={'atividade_id': atividade_id})
         return redirect(redirect_url)
     
-# class ListaNotasAlunosEventoView(LoginRequiredMixin, ListView):
-#     model = NotaEvento
-#     template_name = 'notas/lista_notas_alunos_por_evento.html'
-#     context_object_name = 'notas_alunos'
+class ListaNotasAlunosEventoView(LoginRequiredMixin, ListView):
+    model = Resultado
+    template_name = 'resultados/lista_notas_alunos_por_evento.html'
+    context_object_name = 'notas_alunos'
 
-#     def get_context_data(self, **kwargs: Any) -> Dict[str, Any]:
-#         context = super().get_context_data(**kwargs)
-#         context['evento'] = Evento.objects.get(pk=self.kwargs['evento_id'])
-#         return context
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['atividade'] = Atividade.objects.get(pk=self.kwargs['atividade_id'])
+        return context
 
-#     def get_queryset(self) -> QuerySet[Any]:
-#         evento_id = self.kwargs['evento_id']
-#         return self.model.objects.filter(evento_id=evento_id)
+    def get_queryset(self):
+        atividade_id = self.kwargs['atividade_id']
+        return self.model.objects.filter(atividade_id=atividade_id)
