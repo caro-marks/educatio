@@ -38,7 +38,7 @@ from .views import (
     ListaResultadosView,
     ListaResultadosAlunoView,
     AlunosSemNotasListView,
-#     CriarNotaView,
+    CriarNotaView,
 #     ListaNotasAlunosEventoView,
 
 #     # export
@@ -86,7 +86,7 @@ urlpatterns = [
     path('resultados/', ListaResultadosView.as_view(), name='resultados'),
     path('resultados/aluno/<int:aluno_id>/', ListaResultadosAlunoView.as_view(), name='resultados_aluno'),
     path('resultados/atividade/<int:atividade_id>/alunos_sem_notas', AlunosSemNotasListView.as_view(), name='alunos_sem_notas'),
-#     path('resultados/atividade/<int:atividade_id>/aluno/<int:aluno_id>/', CriarNotaView.as_view(), name='avaliar_aluno'),
+    path('resultados/atividade/<int:atividade_id>/aluno/<int:aluno_id>/', CriarNotaView.as_view(), name='avaliar_aluno'),
 #     path('resultados/atividade/<int:atividade_id>/alunos_com_notas', ListaNotasAlunosEventoView.as_view(), name='alunos_com_notas'),
 
 #     # # dados

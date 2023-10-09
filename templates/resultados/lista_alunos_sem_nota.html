@@ -1,10 +1,9 @@
 {% extends 'homepage.html' %}
 
-
 {% block content %}
 
 <div class="w-100">
-    <h3>Alunos sem notas no evento: {{ evento.descricao }}</h1>
+    <h3>Alunos sem notas no evento: {{ atividade.descricao }}</h1>
         {% if alunos_sem_notas %}
             {% load crispy_forms_tags %}
             <ul>
@@ -13,8 +12,7 @@
                     <div class="row ">                        
                         <div class="col-4"><h5>{{ aluno.nome }}</h5></div>
                         <div class="col ">
-                            
-                            <form class="form-horizontal " action="{% url 'escolas:criar_nota_aluno' evento_id=evento.id aluno_id=aluno.id %}" method="post">
+                            <form class="form-horizontal " action="{% url 'escolas:avaliar_aluno' atividade_id=atividade.id aluno_id=aluno.id %}" method="post">
                                 {% csrf_token %}
                                 {% crispy nota_form %}
                             </form> 

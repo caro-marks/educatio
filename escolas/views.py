@@ -467,27 +467,27 @@ class AlunosSemNotasListView(LoginRequiredMixin, ListView):
         atividade_id = self.kwargs['atividade_id']
         escola = Atividade.objects.get(id=atividade_id).escola
         alunos_com_notas = Resultado.objects.filter(atividade_id=atividade_id).values_list('aluno_id', flat=True)
-        alunos_sem_notas = self.model.objects.filter(escola=escola).exclude(id__in=alunos_com_notas)
+        alunos_sem_notas = self.model.objects.filter(escola=escola, ativo=True).exclude(id__in=alunos_com_notas)
         return alunos_sem_notas
 
-# class CriarNotaView(LoginRequiredMixin, View):
-#     def post(self, request, *args, **kwargs):
-#         aluno_id = self.kwargs['aluno_id']
-#         evento_id = self.kwargs['evento_id']
-#         form = AvaliarEventoForm(request.POST)
+class CriarNotaView(LoginRequiredMixin, View):
+    def post(self, request, *args, **kwargs):
+        aluno_id = self.kwargs['aluno_id']
+        atividade_id = self.kwargs['atividade_id']
+        form = AvaliarAtividadeForm(request.POST)
         
-#         if form.is_valid():
-#             nota = form.cleaned_data['nota']
-#             operador = request.user
-#             NotaEvento.objects.create(
-#                 aluno_id=aluno_id,
-#                 evento_id=evento_id, 
-#                 nota=nota,
-#                 operador=operador
-#             )
+        if form.is_valid():
+            nota = form.cleaned_data['nota']
+            operador = request.user
+            Resultado.objects.create(
+                aluno_id=aluno_id,
+                atividade_id=atividade_id, 
+                nota=nota,
+                operador=operador
+            )
         
-#         redirect_url = reverse('escolas:alunos_sem_notas', kwargs={'evento_id': evento_id})
-#         return redirect(redirect_url)
+        redirect_url = reverse('escolas:alunos_sem_notas', kwargs={'atividade_id': atividade_id})
+        return redirect(redirect_url)
     
 # class ListaNotasAlunosEventoView(LoginRequiredMixin, ListView):
 #     model = NotaEvento
