@@ -7,13 +7,20 @@
         </div>
         <div class="card-body">
             <h2 class="py-4 card-title">{{ escola.nome }}</h2>
-            <p class="card-text"><strong>CNPJ:</strong> {{ escola.cnpj }}</p>
-            <p class="card-text"><strong>Endereço:</strong> {{ escola.endereco }}</p>
-            <p class="card-text"><strong>Bairro:</strong> {{ escola.bairro }}</p>
-            <p class="card-text"><strong>CEP:</strong> {{ escola.cep }}</p>
-            <p class="card-text"><strong>Cidade:</strong> {{ escola.cidade }}</p>
-            <p class="card-text"><strong>Estado:</strong> {{ escola.estado }}</p>
-            <p class="card-text"><strong>Diretor:</strong> {{ escola.diretor }}</p>
+            <div class="row">
+                <div class="col-md-6">
+                    <p class="card-text"><strong>CNPJ:</strong> {{ escola.cnpj }}</p>
+                    <p class="card-text"><strong>Endereço:</strong> {{ escola.get_endereco_junto_display }}</p>
+                    <p class="card-text"><strong>CEP:</strong> {{ escola.cep }}</p>
+                    <p class="card-text"><strong>Complemento:</strong> {{ escola.complemento }}</p>
+                </div>
+                <div class="col-md-6">
+                    <p class="card-text"><strong>Diretor:</strong> {{ escola.diretor }}</p>
+                    <p class="card-text"><strong>Email:</strong> {{ escola.email }}</p>
+                    <p class="card-text"><strong>Telefone principal:</strong> {{ escola.telefone_principal }}</p>
+                    <p class="card-text"><strong>Telefone secundário:</strong> {{ escola.telefone_secundario }}</p>
+                </div>
+            </div>
             <a href="{% url 'escolas:edita_escola' escola.id %}" class="mt-5 btn btn-primary">
                 Editar
             </a>

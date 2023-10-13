@@ -39,6 +39,9 @@ class Escola(models.Model):
     criado_em = models.DateTimeField(auto_now_add=True)
     atualizado_em = models.DateTimeField(auto_now=True)
     operador = models.ForeignKey(CustomUser, null=True, blank=True, on_delete=models.CASCADE)
+    
+    def get_endereco_junto_display(self):
+        return f'{self.endereco}, {self.bairro} - {self.cidade}/{self.estado}'
 
     def __str__(self):
         return self.nome
@@ -129,21 +132,3 @@ class Resultado(models.Model):
 
     def __str__(self):
         return f'{self.atividade} - {self.aluno}'
-
-
-# class Escola(models.Model):
-#     nome = models.CharField(max_length=100)  
-
-# class Aluno(models.Model):
-#     nome = models.CharField(max_length=50)
-#     escola = models.ForeignKey(Escola, on_delete=models.CASCADE)
-
-# class Evento(models.Model):
-#     descricao = models.CharField(max_length=100)
-#     escola = models.ForeignKey(Escola, on_delete=models.CASCADE)
-
-# class NotaEvento(models.Model):
-#     aluno = models.ForeignKey(Aluno, on_delete=models.CASCADE)
-#     evento = models.ForeignKey(Evento, on_delete=models.CASCADE)
-#     nota = models.DecimalField(max_digits=5, decimal_places=2)
-#     data = models.DateField(blank=True, null=True)

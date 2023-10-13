@@ -3,7 +3,9 @@
 {% block content %}
 
 <div class="w-100">
-    <h3>Alunos sem notas no evento: {{ atividade.descricao }}</h1>
+    <div class="d-flex flex-row mb-5">
+        <h3>Alunos sem notas no evento: <strong>{{ atividade.descricao }}</h3></strong>
+    </div>
         {% if alunos_sem_notas %}
             {% load crispy_forms_tags %}
             <ul>

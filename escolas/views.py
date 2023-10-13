@@ -1,8 +1,5 @@
 import datetime, csv
-# from typing import Any, Dict
-# from django.db.models.query import QuerySet
-# from django.forms.models import BaseModelForm
-from django.views.generic import ListView, DetailView, TemplateView, View, CreateView, UpdateView, DeleteView
+from django.views.generic import ListView, DetailView, TemplateView, View, CreateView, UpdateView
 from .models import CustomUser, Escola, Aluno, Parente, Atividade, Resultado
 from django.contrib.auth.models import Group
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -26,6 +23,8 @@ from .forms import (
     
     ListResultadosFilter, 
     AvaliarAtividadeForm,
+
+    SimpleDataFilter
 )
     
 ### HOMEPAGE
@@ -274,8 +273,22 @@ class ListaAtividadeView(LoginRequiredMixin, ListView):
     def get_queryset(self):
         queryset = super().get_queryset()
         if escola_id :=  self.request.GET.get('escola'):
-            queryset = queryset.filter(escola_id=escola_id)
+            queryset = queryset.filter(escola_id=escola_id)        
+        
+        data_inicio = self.request.GET.get('data_inicio')
+        data_fim = self.request.GET.get('data_fim')
+        
+        if data_inicio:
+            queryset = queryset.filter(data__gte=data_inicio)
+        if data_fim:
+            queryset = queryset.filter(data__lte=data_fim)
+
         return queryset.order_by('descricao', 'escola', 'peso')
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['filter_form'] = SimpleDataFilter(self.request.GET)
+        return context
 
 class CriaAtividadeView(LoginRequiredMixin, CreateView):
     model = Atividade
@@ -443,13 +456,22 @@ class ListaResultadosView(LoginRequiredMixin, TemplateView):
 class ListaResultadosAlunoView(LoginRequiredMixin, TemplateView):
     model = Resultado
     template_name = 'resultados/lista_resultados_aluno.html'
+    form_class = SimpleDataFilter
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        form = self.form_class(self.request.GET)
+        context['form'] = form
+        data_inicio = self.request.GET.get('data_inicio')
+        data_fim = self.request.GET.get('data_fim')
         aluno_id = self.kwargs.get('aluno_id')
         aluno = Aluno.objects.get(pk=aluno_id)
         context['aluno'] = aluno
         resultados = self.model.objects.filter(aluno=aluno)
+        if data_inicio:
+            resultados = resultados.filter(atividade__data__gte=data_inicio)
+        if data_fim:
+            resultados = resultados.filter(atividade__data__lte=data_fim)
         context['resultados'] = resultados
         return context
 

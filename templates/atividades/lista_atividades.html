@@ -5,11 +5,22 @@
 <div class="w-100">
     {% load crispy_forms_tags %}
     
-    <div class="d-flex flex-row justify-content-between align-items-center mb-5">
+    <div class="d-flex flex-row justify-content-between align-items-center mb-3">
         <h1>Atividades</h1>
         <a role="button" class="btn custom-button" href="{% url 'escolas:cria_atividade' %}?escola={{ request.GET.escola|urlencode }}">
             Nova
         </a>
+    </div>
+    <div class="d-flex flex-row justify-content-between align-items-center my-3">
+        <button class="custom-button mb-1" type="button" data-toggle="collapse" data-target="#filterForm" aria-expanded="false" aria-controls="filterForm">
+            Filtrar por datas
+        </button>
+        <div class="collapse" id="filterForm">
+            <form action="{% url 'escolas:atividades' %}" method="get" class="align-self-bot">
+                {% csrf_token %}                
+                {% crispy filter_form %}
+            </form>
+        </div>
     </div>
     <table id="atividades" class="table table-striped table-bordeless mt-3 pt-3" style="width:100%">
         <thead>            
