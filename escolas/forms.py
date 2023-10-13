@@ -1,15 +1,19 @@
-from typing import Any, Dict, Mapping, Optional, Type, Union
 from django import forms
 from django.core.exceptions import ValidationError
-# from django.core.files.base import File
-# from django.db.models.base import Model
-# from django.forms.utils import ErrorList
 from .enums import ESTADOS_BRASILEIROS
-from .models import CustomUser, Escola, Aluno, Parente, Atividade, Resultado
+from .models import CustomUser, Escola, Aluno, Parente, Atividade
 from django.forms.widgets import DateInput
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Row, Column, ButtonHolder, Submit
-from django.core.validators import MinLengthValidator, MinValueValidator, MaxValueValidator
+from django.core.validators import MinValueValidator, MaxValueValidator
+
+class AtividadeSelectFilter(forms.Select):
+    def create_option(self, name, value, *args, **kwargs):
+        option = super().create_option(name, value, *args, **kwargs)
+        if value:
+            atividade = Atividade.objects.get(pk=int(str(value)))
+            option["attrs"]["data-escola"] = atividade.escola.id
+        return option
 
 class TelefoneWidget(forms.TextInput):  
     def format_value(self, value):
@@ -328,7 +332,7 @@ class ListResultadosFilter(forms.Form):
         queryset=Atividade.objects.all(),
         empty_label="--",
         required=False,
-        widget=forms.Select(attrs={'id': 'atividade-select'})
+        widget=AtividadeSelectFilter(attrs={'id': 'atividade-select'})
     )
     data_inicio = forms.DateField(label='De', required=False, widget=forms.DateInput(attrs={'type': 'date'}))
     data_fim = forms.DateField(label='Até', required=False, widget=forms.DateInput(attrs={'type': 'date'}))
