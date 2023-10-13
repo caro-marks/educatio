@@ -7,6 +7,12 @@
         <button class="custom-button my-3" type="button" data-toggle="collapse" data-target="#filterForm" aria-expanded="false" aria-controls="filterForm">
             + Filtros
         </button>
+        <a
+            href="{% url 'escolas:exportar_dados_notas' %}?escola={{ escola }}&atividade={{ atividade }}&data_inicio={{ data_inicio }}&data_fim={{ data_fim }}"
+            class="custom-button"
+        >
+            Exportar Dados
+        </a>
     </div>
     <div class="collapse py-2" id="filterForm">
         <form action="{% url 'escolas:resultados' %}" method="get">

@@ -8,7 +8,7 @@ from django.contrib.auth.models import Group
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse, reverse_lazy
 from django.shortcuts import redirect, get_object_or_404
-# from django.http import HttpRequest, HttpResponse
+from django.http import HttpResponse
 from .forms import (
     UsuarioForm, 
     
@@ -348,7 +348,8 @@ def get_notas(resultados):
                 'detalhes': [
                     {
                         'nota_id': nota_evento.id,
-                        'nota': nota_evento.nota
+                        'nota': float(nota_evento.nota),
+                        'data': nota_evento.atividade.data.strftime("%d/%m/%Y")
 
                     } for nota_evento in resultados_aluno
                 ]
@@ -374,47 +375,45 @@ def get_resultados(escola_id, atividade_id, data_inicio, data_fim):
         resultados = Resultado.objects.all()
 
     if data_inicio:
-        # resultados = resultados.filter(data_entrega__gte=data_inicio)
         resultados = resultados.filter(atividade__data__gte=data_inicio)
     if data_fim:
-        # resultados = resultados.filter(data_entrega__lte=data_fim)
         resultados = resultados.filter(atividade__data__lte=data_fim)
     
     notas = get_notas(resultados)
 
     return notas, titulo
 
-# class ExportarDadosNotas(LoginRequiredMixin, View):
-#     def get(self, request, *args, **kwargs):
-#         escola_id = request.GET.get('escola')
-#         evento_id = request.GET.get('evento')
-#         data_inicio = request.GET.get('data_inicio')
-#         data_fim = request.GET.get('data_fim')
+class ExportarDadosNotas(LoginRequiredMixin, View):
+    def get(self, request, *args, **kwargs):
+        escola_id = request.GET.get('escola')
+        atividade_id = request.GET.get('atividade')
+        data_inicio = request.GET.get('data_inicio')
+        data_fim = request.GET.get('data_fim')
 
-#         notas_evento, nota_field = get_resultados(
-#             escola_id, evento_id, data_inicio, data_fim
-#         )
+        notas_evento, nota_field = get_resultados(
+            escola_id, atividade_id, data_inicio, data_fim
+        )
 
-#         filename_raw = f"notas"
-#         if escola_id:
-#             filename_raw += f"-escola_{escola_id}"
-#         if evento_id:
-#             filename_raw += f"-evento_{evento_id}"
-#         if data_inicio:
-#             filename_raw += f"-from_{data_inicio}"
-#         if data_fim:
-#             filename_raw += f"-to_{data_fim}"
+        filename_raw = f"notas"
+        if escola_id:
+            filename_raw += f"-escola_{escola_id}"
+        if atividade_id:
+            filename_raw += f"-atividade_{atividade_id}"
+        if data_inicio:
+            filename_raw += f"-from_{data_inicio}"
+        if data_fim:
+            filename_raw += f"-to_{data_fim}"
 
-#         response = HttpResponse(content_type='text/csv')
-#         response['Content-Disposition'] = f'attachment; filename="{filename_raw}.csv"'
+        response = HttpResponse(content_type='text/csv')
+        response['Content-Disposition'] = f'attachment; filename="{filename_raw}.csv"'
 
-#         writer = csv.writer(response)
-#         writer.writerow(['Aluno', nota_field])
+        writer = csv.writer(response)
+        writer.writerow(['Aluno', nota_field, 'Escola', 'Detalhes'])
         
-#         for nota in notas_evento:
-#             writer.writerow([nota['aluno'], nota['resultado'], nota['escola'], nota['detalhes']])
+        for nota in notas_evento:
+            writer.writerow([nota['aluno'], nota['resultado'], nota['escola'], nota['detalhes']])
         
-#         return response
+        return response
 
 class ListaResultadosView(LoginRequiredMixin, TemplateView):
     template_name = 'resultados/lista_resultados.html'
@@ -428,6 +427,10 @@ class ListaResultadosView(LoginRequiredMixin, TemplateView):
         atividade_id = self.request.GET.get('atividade')
         data_inicio = self.request.GET.get('data_inicio')
         data_fim = self.request.GET.get('data_fim')
+        context['escola'] = escola_id
+        context['atividade'] = atividade_id
+        context['data_inicio'] = data_inicio
+        context['data_fim'] = data_fim
 
         resultados, titulo = get_resultados(
             escola_id, atividade_id, data_inicio, data_fim

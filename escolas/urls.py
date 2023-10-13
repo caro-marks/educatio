@@ -41,8 +41,8 @@ from .views import (
     CriarNotaView,
     ListaNotasAlunosEventoView,
 
-#     # export
-#     ExportarDadosNotas
+    # export
+    ExportarDadosNotas
 )
 
 app_name = 'escolas'
@@ -89,7 +89,7 @@ urlpatterns = [
     path('resultados/atividade/<int:atividade_id>/aluno/<int:aluno_id>/', CriarNotaView.as_view(), name='avaliar_aluno'),
     path('resultados/atividade/<int:atividade_id>/alunos_com_notas', ListaNotasAlunosEventoView.as_view(), name='alunos_com_notas'),
 
-#     # # dados
-#     path('exportar_dados_notas/', ExportarDadosNotas.as_view(), name='exportar_dados_notas')
+    # # dados
+    path('exportar_dados_notas/', ExportarDadosNotas.as_view(), name='exportar_dados_notas')
 ]
                         
