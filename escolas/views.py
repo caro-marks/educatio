@@ -1,10 +1,10 @@
 import datetime, csv
 from django.views.generic import ListView, DetailView, TemplateView, View, CreateView, UpdateView
-from .models import CustomUser, Escola, Aluno, Parente, Atividade, Resultado
+from .models import CustomUser, Escola, Aluno, Parente, Atividade, Resultado, Parentesco
 from django.contrib.auth.models import Group
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse, reverse_lazy
-from django.shortcuts import redirect, get_object_or_404
+from django.shortcuts import redirect, get_object_or_404, render
 from django.http import HttpResponse
 from .forms import (
     UsuarioForm, 
@@ -15,8 +15,9 @@ from .forms import (
     ListAlunosFilter, 
     CriaAlunoForm,
     EditaAlunoForm,
-    CriaParenteForm,
+
     EditaParenteForm,
+    AdicionaParenteForm,
 
     CriaAtividadeForm,
     EditaAtividadeForm,
@@ -131,7 +132,7 @@ class DetalheAlunoView(LoginRequiredMixin, DetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['parente_form'] = CriaParenteForm()
+        context['cria_parente_form'] = AdicionaParenteForm()
         return context
 
 class ListaAlunosView(LoginRequiredMixin, TemplateView):
@@ -211,44 +212,56 @@ class AlunoDesativaView(LoginRequiredMixin, View):
         objeto.save()
         redirect_url = reverse('escolas:alunos')
         return redirect(redirect_url) 
-
-### Parente
-class ParenteCreateView(LoginRequiredMixin, CreateView):
-    model = Parente
-    form_class = CriaParenteForm
+    
+class ParenteCreateView(LoginRequiredMixin, View):
     template_name = 'alunos/cria_parente.html'
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['aluno_id'] = self.kwargs.get('aluno_id')
-        return context
-    
-    def get_success_url(self):
-        aluno_id = self.kwargs.get('aluno_id')
-        success_url = reverse_lazy('escolas:aluno', kwargs={'pk': aluno_id})
-        return success_url
+    def get(self, request, *args, **kwargs):
+        context = {
+            'cria_parente_form': AdicionaParenteForm()
+        }
+        return render(request, self.template_name, context)
 
-    def form_valid(self, form):
-        form.instance.operador = self.request.user
-        parente = form.save()
-        aluno = Aluno.objects.get(pk=self.kwargs.get('aluno_id'))
-        aluno.familia.add(parente)
-        aluno.save()
-        return super().form_valid(form)
+    def post(self, request, *args, **kwargs):
+        aluno = Aluno.objects.get(pk=kwargs.pop('aluno_id'))
+        cria_parente_form = AdicionaParenteForm(request.POST)
+        if cria_parente_form.is_valid():
+            cleaned_form = cria_parente_form.cleaned_data
+            if parente := cleaned_form.pop('parente'):
+                print(f'parente presente: {parente}')
+            else:
+                parente_data = {
+                    'nome': cleaned_form.get('nome'),
+                    'cpf': cleaned_form.get('cpf'),
+                    'idade': cleaned_form.get('idade'),
+                    'telefone': cleaned_form.get('telefone'),
+                    'email': cleaned_form.get('email'),
+                    'info_adicionais': cleaned_form.get('info_adicionais'),
+                    'operador': self.request.user
+                }
+                
+                parente = Parente.objects.create(**parente_data)
+                
+            Parentesco.objects.create(
+                aluno=aluno,
+                parente=parente,
+                grau_parentesco=cleaned_form.get('grau_parentesco'),
+                principal_responsavel=cleaned_form.get('principal_responsavel'),
+            )
+
+            return redirect(
+                reverse_lazy('escolas:aluno', kwargs={'pk': aluno.id})
+            )
+        context = {
+            'cria_parente_form': cria_parente_form,
+        }
+        return render(request, self.template_name, context)
+
 
 class DetalheParenteView(LoginRequiredMixin, DetailView):
     model = Parente
     template_name = 'alunos/detalhe_parente.html'
     context_object_name = 'parente'
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        aluno_id = self.kwargs.get('aluno_id')
-        aluno = Aluno.objects.get(pk=aluno_id)
-        context['aluno_id'] = aluno_id
-        context['aluno'] = aluno.nome
-
-        return context
     
 class ParenteUpdateView(LoginRequiredMixin, UpdateView):
     model = Parente
@@ -256,8 +269,7 @@ class ParenteUpdateView(LoginRequiredMixin, UpdateView):
     template_name = 'alunos/edita_parente.html'
     
     def get_success_url(self) -> str:
-        aluno_id = self.kwargs.get('aluno_id')
-        reverse_url = reverse('escolas:parente', args=[aluno_id, self.object.pk])
+        reverse_url = reverse('escolas:parente', args=[self.object.pk])
         return reverse_url
 
     def form_valid(self, form):

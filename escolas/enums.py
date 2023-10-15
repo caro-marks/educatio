@@ -5,7 +5,7 @@ class BaseEnum(Enum):
     def choices(cls):
         return [(enum.name, enum.value) for enum in cls]
 
-class Parentesco(BaseEnum):    
+class ParentescoChoices(BaseEnum):    
     PAI = 'Pai'
     MAE = 'Mãe'
     IRM = 'Irmãos'

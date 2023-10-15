@@ -5,15 +5,36 @@
 
         <!-- Modal content-->
             <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal">&times;</button>
-                    <h4 class="modal-title">Cadastro de Parente</h4>
+                <div class="modal-header flex-column">
+                    <div class="w-100">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h4 class="modal-title">Adição de Parente</h4>
+                    </div>
+                    <br />
+                    <div class="w-100 border-top">    
+                        <label for="parente_option">Escolha um parente existente ou cadastre um novo:</label>
+                        <select id="parente_option" name="parente_option">
+                            <option value="existing" selected>Parente Existente</option>
+                            <option value="new">Cadastrar Novo</option>
+                        </select>
+                    </div>
                 </div>
                 <div class="modal-body">
                     {%load crispy_forms_tags %} 
                     {% csrf_token %}
-                
-                    {{ parente_form|crispy }}
+                    {{ cria_parente_form.grau_parentesco|as_crispy_field }}
+                    {{ cria_parente_form.principal_responsavel|as_crispy_field }}
+                    <div id="existenteParente" class="w-100">                
+                        {{ cria_parente_form.parente|as_crispy_field }}
+                    </div>
+                    <div id="novoParente" class="w-100" style="display: none;">                
+                        {{ cria_parente_form.nome|as_crispy_field }}
+                        {{ cria_parente_form.cpf|as_crispy_field }}
+                        {{ cria_parente_form.idade|as_crispy_field }}
+                        {{ cria_parente_form.telefone|as_crispy_field }}
+                        {{ cria_parente_form.email|as_crispy_field }}
+                        {{ cria_parente_form.info_adicionais|as_crispy_field }}
+                    </div>
                 </div>
                 <div class="modal-footer">
                     <button class="filter-button" type="submit">Cadastrar Parente</button>

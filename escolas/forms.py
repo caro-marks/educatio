@@ -1,6 +1,6 @@
 from django import forms
 from django.core.exceptions import ValidationError
-from .enums import ESTADOS_BRASILEIROS
+from .enums import ESTADOS_BRASILEIROS, ParentescoChoices
 from .models import CustomUser, Escola, Aluno, Parente, Atividade
 from django.forms.widgets import DateInput
 from crispy_forms.helper import FormHelper
@@ -14,12 +14,6 @@ class AtividadeSelectFilter(forms.Select):
             atividade = Atividade.objects.get(pk=int(str(value)))
             option["attrs"]["data-escola"] = atividade.escola.id
         return option
-
-class TelefoneWidget(forms.TextInput):  
-    def format_value(self, value):
-        if value:
-            return f'({value[:2]}) {value[2:6]}-{value[6:]}'
-        return value
 
 
 class UsuarioForm(forms.ModelForm):
@@ -53,8 +47,6 @@ class CriaEscolaForm(forms.ModelForm):
         widgets = {
             'complemento': forms.Textarea(attrs={'rows': 2}),
             'estado': forms.Select(choices=ESTADOS_BRASILEIROS),
-            'telefone_principal': TelefoneWidget(),
-            'telefone_secundario': TelefoneWidget()
         }
     
     def __init__(self, *args, **kwargs) -> None:
@@ -279,13 +271,30 @@ class ListAlunosFilter(forms.Form):
     escola = forms.ChoiceField(choices=[('', '--')] + [(escola.id, escola.nome) for escola in Escola.objects.filter(ativo=True)], required=False)
 
 
-class CriaParenteForm(forms.ModelForm):
-    class Meta:
-        model = Parente
-        exclude = ['operador']
-        labels = {
-            'principal_responsavel': 'Principal Responsável'
-        }
+class AdicionaParenteForm(forms.Form):
+    parente = forms.ModelChoiceField(
+        queryset=Parente.objects.all(),
+        label="Selecione um parente existente",
+        required=False
+    )
+    nome = forms.CharField(
+        max_length=100,
+        required=False,
+        label='Nome*',
+        widget=forms.TextInput(attrs={'class': 'optionalRequired'})
+    )
+    cpf = forms.CharField(max_length=15, required=False)
+    grau_parentesco = forms.ChoiceField(
+        choices=[('', 'Escolha um grau de parentesco')] + ParentescoChoices.choices(),        
+        widget=forms.Select(attrs={'class': 'optionalRequired'}),
+        label='Grau de Parentesco*',
+        required=False
+    )
+    idade = forms.IntegerField(required=False)
+    principal_responsavel = forms.BooleanField(initial=False, required=False)
+    telefone = forms.CharField(max_length=15, required=False)
+    email = forms.EmailField(required=False)
+    info_adicionais = forms.CharField(max_length=200, required=False)
 
 
 class EditaParenteForm(forms.ModelForm):

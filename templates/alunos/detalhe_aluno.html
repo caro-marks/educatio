@@ -49,19 +49,19 @@
                 </tr>
             </thead>
             <tbody>
-                {% for parente in aluno.familia.all %}
+                {% for parentesco in aluno.parentescos.all %}
                     <tr>
-                        <td class="border-bottom">{{ parente.nome }}</td>
-                        <td class="border-bottom">{{ parente.get_grau_parentesco_display }}</td>
+                        <td class="border-bottom">{{ parentesco.parente.nome }}</td>
+                        <td class="border-bottom">{{ parentesco.get_grau_parentesco_display }}</td>
                         <td class="border-bottom">
-                            {% if parente.principal_responsavel %}
+                            {% if parentesco.principal_responsavel %}
                                 Principal Responsavel; 
                             {% endif %}
-                            {{ parente.info_adicionais }}
+                            {{ parentesco.parente.info_adicionais }}
                         </td>
                         <td class="text-center align-middle border-bottom">
                             <div class="btn-group" role="group" aria-label="Acoes">
-                                <a role="button" class="btn btn-info" href="{% url 'escolas:parente' aluno.id parente.id %}">
+                                <a role="button" class="btn btn-info" href="{% url 'escolas:parente' parentesco.parente.id %}">
                                     Detalhes
                                 </a>
                             </div>

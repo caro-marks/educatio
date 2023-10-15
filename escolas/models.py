@@ -1,7 +1,8 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
-from .enums import Parentesco, EstadosCivis, PeriodoEscola, SerieEscolar
+from .enums import ParentescoChoices, EstadosCivis, PeriodoEscola, SerieEscolar
 from django.core.validators import MinLengthValidator, MinValueValidator, MaxValueValidator
+from datetime import date
 
 # Create your models here.
 
@@ -45,25 +46,6 @@ class Escola(models.Model):
 
     def __str__(self):
         return self.nome
-    
-
-class Parente(models.Model):
-    nome = models.CharField(max_length=100)
-    grau_parentesco = models.CharField(max_length=3, choices=Parentesco.choices())
-    idade = models.PositiveSmallIntegerField(blank=True, null=True)
-    principal_responsavel = models.BooleanField(default=False)
-    telefone = models.CharField(max_length=15, null=True, blank=True)
-    email = models.EmailField(null=True, blank=True)
-    info_adicionais = models.CharField(max_length=200, blank=True)
-    criado_em = models.DateTimeField(auto_now_add=True)
-    atualizado_em = models.DateTimeField(auto_now=True)
-    operador = models.ForeignKey(CustomUser, null=True, blank=True, on_delete=models.CASCADE)
-    
-    def get_grau_parentesco_display(self):
-        return dict(Parentesco.choices())[self.grau_parentesco]
-
-    def __str__(self):
-        return f'{self.get_grau_parentesco_display()} {self.nome}'
 
 
 class Aluno(models.Model):
@@ -76,7 +58,6 @@ class Aluno(models.Model):
     estado = models.CharField(max_length=2)
     complemento = models.CharField(max_length=100, blank=True, null=True)
     data_nascimento = models.DateField()
-    familia = models.ManyToManyField(Parente, blank=True)
     estado_civil_pais = models.CharField(max_length=3, choices=EstadosCivis.choices(), blank=True, null=True)
     cras = models.CharField(blank=True, null=True, max_length=30)
     escola = models.ForeignKey(Escola, on_delete=models.CASCADE)
@@ -104,6 +85,37 @@ class Aluno(models.Model):
 
     def __str__(self):
         return self.nome
+    
+
+class Parente(models.Model):
+    nome = models.CharField(max_length=100)
+    cpf = models.CharField(max_length=15, unique=True, blank=True, null=True)
+    idade = models.PositiveSmallIntegerField(blank=True, null=True)
+    telefone = models.CharField(max_length=15, null=True, blank=True)
+    email = models.EmailField(null=True, blank=True)
+    info_adicionais = models.CharField(max_length=300, blank=True)
+    criado_em = models.DateTimeField(auto_now_add=True)
+    atualizado_em = models.DateTimeField(auto_now=True)
+    operador = models.ForeignKey(CustomUser, null=True, blank=True, on_delete=models.CASCADE)
+
+    def get_idade_atual_display(self):
+        return f'{self.idade + (date.today().year - self.criado_em.year)}'
+
+    def __str__(self):
+        return self.nome
+
+
+class Parentesco(models.Model):
+    aluno = models.ForeignKey(Aluno, on_delete=models.CASCADE, related_name='parentescos')
+    parente = models.ForeignKey(Parente, on_delete=models.CASCADE, related_name='parentescos')
+    grau_parentesco = models.CharField(max_length=3, choices=ParentescoChoices.choices())
+    principal_responsavel = models.BooleanField(default=False)
+
+    def get_grau_parentesco_display(self):
+        return f'{dict(ParentescoChoices.choices()).get(self.grau_parentesco)} de {self.aluno}'
+
+    def __str__(self) -> str:
+        return f'{self.parente}, {self.get_grau_parentesco_display()}'
 
 
 class Atividade(models.Model):

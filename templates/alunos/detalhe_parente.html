@@ -9,17 +9,24 @@
     </div>
     
     <div class="card-body">
-        <p class="card-text">
-            <strong>
-                {{ parente.get_grau_parentesco_display }}
-            </strong> de {{ aluno }}
-        </p>
 
-        <p class="card-text"><strong>Principal responsavel: </strong>{% if parente.principal_responsavel %} Sim {% else %} Não {% endif %}</p>
+        <p class="card-text"><strong>CPF: </strong>{{ parente.cpf }}</p>
+        <p class="card-text"><strong>Idade: </strong>{{ parente.get_idade_atual_display }}</p>
         <p class="card-text"><strong>Telefone: </strong>{{ parente.telefone }}</p>
         <p class="card-text"><strong>Email: </strong>{{ parente.email }}</p>
         <p class="card-text"><strong>Informações adicionais: </strong> {{ parente.info_adicionais }}</p>
-        <a href="{% url 'escolas:edita_parente' aluno_id=aluno_id pk=parente.id %}" class="mt-5 btn btn-primary">
+        <br />
+        <h4 class="pt-2 border-top">Parentescos</h4>
+        <ul>
+            {% for parentesco in parente.parentescos.all %}
+            <li>
+                {{ parentesco.get_grau_parentesco_display }}; {% if parentesco.principal_responsavel %} Principal responsável {% endif %}
+            </li>
+            {% endfor %}
+        </ul>
+
+
+        <a href="{% url 'escolas:edita_parente' pk=parente.id %}" class="mt-3 btn btn-primary">
             Editar
         </a>
     </div>
