@@ -400,7 +400,7 @@ class SimpleDataFilter(forms.Form):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.helper = FormHelper()
-        self.helper.form_class = 'form-horizontal'
+        self.helper.form_class = 'form-horizontal my-0 py-0'
         self.helper.label_class = 'col-md-2'
         self.helper.field_class = 'col-md-8'
         self.helper.layout = Layout(

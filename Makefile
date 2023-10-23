@@ -1,8 +1,16 @@
+
+run:
+	sudo docker-compose up
+
 migrations:
-	python manage.py makemigrations
+	sudo docker-compose run backend python manage.py makemigrations
 
 migrate:
-	python manage.py migrate
+	sudo docker-compose run backend python manage.py migrate
 
-runserver:
-	python manage.py runserver
+superuser:
+	sudo docker-compose run backend python manage.py createsuperuser
+
+build:
+	sudo docker-compose up --build -d db
+	sudo docker-compose up --build -d backend
