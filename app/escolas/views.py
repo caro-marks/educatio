@@ -9,7 +9,8 @@ from django.urls import reverse, reverse_lazy
 from django.shortcuts import redirect, get_object_or_404, render
 from django.http import HttpResponse
 from .forms import (
-    UsuarioForm, 
+    UsuarioForm,
+    EditaUsuarioForm,
     
     CriaEscolaForm, 
     EditaEscolaForm, 
@@ -81,6 +82,17 @@ class UsuarioDesativaView(LoginRequiredMixin, View):
         objeto.save()
         return redirect(reverse('escolas:usuarios'))
 
+class UsuarioUpdateView(LoginRequiredMixin, UpdateView):
+    model = CustomUser
+    form_class = EditaUsuarioForm
+    template_name = 'usuarios/edita_usuario.html'
+    
+    def get_success_url(self):
+        return reverse('escolas:usuario', args=[self.object.pk])
+
+    # def form_valid(self, form):
+    #     form.instance.operador = self.request.user
+    #     return super().form_valid(form)
 
 ### ESCOLAS
 class EscolasDetailView(LoginRequiredMixin, DetailView):

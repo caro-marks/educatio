@@ -9,6 +9,7 @@ from .views import (
     UsuariosDetailView,
     UsuarioListView,
     UsuarioDesativaView,
+    UsuarioUpdateView,
 
     # escolas
     EscolaCreateView,
@@ -57,6 +58,7 @@ urlpatterns = [
     path('usuario/novo/', UsuarioCreateView.as_view(), name='cria_usuario'),
     path('usuario/<int:pk>/', UsuariosDetailView.as_view(), name='usuario'),
     path('usuario/<int:pk>/desativa', UsuarioDesativaView.as_view(), name='desativa_usuario'),
+    path('usuario/<int:pk>/edita', UsuarioUpdateView.as_view(), name='edita_usuario'),
 
     # escola
     path('escolas/', EscolasListView.as_view(), name='escolas'),

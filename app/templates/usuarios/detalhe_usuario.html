@@ -3,27 +3,32 @@
 {% block content %}
 <div class="card w-75 shadow-lg">
     <div class="card-header">           
-        <h2 class="card-text">Detalhes do Usuario</h2>
+        <h2 class="card-text">Detalhes do Usuario: {{ usuario.username }}</h2>
     </div>
     <div class="card-body">
         <h4 class="py-4 card-title"><strong>Nome:</strong> {{ usuario.first_name  }} {{ usuario.last_name }}</h4>
 
+        <p class="card-text"><strong>Cargo:</strong> {{ usuario.cargo }}</p>
+        
         <p class="card-text"><strong>Email:</strong> {{ usuario.email }}</p>
     </div>
-    {% if request.user.is_superuser %}
     <div class="card-footer">
-        <div class="row justify-content-between">
+        <div class="row justify-content-end">
+            <a href="{% url 'escolas:edita_usuario' usuario.id %}" class="btn btn-secondary mx-1">
+                Edita
+            </a>
+            {% if request.user.is_superuser %}
             {% if not usuario.is_superuser %}
-                <button class="btn btn-danger" type="button" data-toggle="modal" data-target="#desativaUsuarioModal">
+                <button class="btn btn-danger mr-1" type="button" data-toggle="modal" data-target="#desativaUsuarioModal">
                     Desativar
                 </button>
             {% endif %}
-            <a role="button" class="btn custom-button" href="{% url 'escolas:usuarios' %}">
+            <a role="button" class="btn custom-button ml-1" href="{% url 'escolas:usuarios' %}">
                 Outros usuários
             </a> 
+            {% endif %}
         </div>
     </div>
-    {% endif %}
 </div>
 {% include 'usuarios/desativa_usuario.html' %}
 {% endblock %}

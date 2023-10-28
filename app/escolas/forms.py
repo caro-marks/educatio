@@ -32,6 +32,23 @@ class UsuarioForm(forms.ModelForm):
         return user
 
 
+class EditaUsuarioForm(forms.ModelForm):
+    class Meta:
+        model = CustomUser
+        fields = ['username', 'first_name', 'last_name', 'cargo', 'email', 'password']
+        widgets = {
+            'password': forms.PasswordInput()
+        }
+
+    def save(self, commit=True):
+        user = super().save(commit=False)
+        print(f'cleaned data: {self.cleaned_data}')
+        user.set_password(self.cleaned_data["password"])
+        if commit:
+            user.save()
+        return user
+
+
 class CriaEscolaForm(forms.ModelForm):    
     telefone_principal = forms.CharField(required=True)
 
