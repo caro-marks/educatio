@@ -7,7 +7,7 @@ from datetime import date
 # Create your models here.
 
 class CustomUser(AbstractUser):
-    ativo = models.BooleanField(default=True)
+    cargo = models.CharField(max_length=50, null=True, blank=True)
 
     class Meta:
         swappable = 'AUTH_USER_MODEL'

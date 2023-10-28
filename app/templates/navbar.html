@@ -25,12 +25,9 @@
         <div class="collapse navbar-collapse justify-content-end" id="mainNavbar">
             <ul class="navbar-nav ms-auto align-items-center">
                 {% if request.user.is_authenticated %}
-                    {% if request.user.is_superuser %}
-                        <li class="nav-item ms-3">
-                            <a class="btn btn-black btn-rounded" href="{% url 'escolas:usuarios' %}">Usuários</a>
-                        </li>
-                    {% endif %}
-                    
+                    <li class="nav-item ms-5">
+                        <a class="btn btn-black btn-rounded" href="{% url 'escolas:usuario' request.user.id %}">Perfil</a>
+                    </li>       
                     <li class="nav-item">
                         <a class="nav-link mx-2" href="{% url 'escolas:escolas' %}"><i class="fas fa-school mr-1"></i>Escolas</a>
                     </li>

@@ -19,15 +19,14 @@ class AtividadeSelectFilter(forms.Select):
 class UsuarioForm(forms.ModelForm):
     class Meta:
         model = CustomUser
-        fields = ['username', 'email', 'password']
+        fields = ['username', 'first_name', 'last_name', 'cargo', 'email', 'password']
         widgets = {
             'password': forms.PasswordInput()
         }
 
     def save(self, commit=True):
         user = super().save(commit=False)
-        password = self.cleaned_data["password"]
-        user.set_password(password)
+        user.set_password(self.cleaned_data["password"])
         if commit:
             user.save()
         return user

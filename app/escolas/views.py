@@ -2,6 +2,8 @@ import datetime, csv
 from django.views.generic import ListView, DetailView, TemplateView, View, CreateView, UpdateView
 from .models import CustomUser, Escola, Aluno, Parente, Atividade, Resultado, Parentesco
 from django.contrib.auth.models import Group
+from django.db.models import Q
+
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse, reverse_lazy
 from django.shortcuts import redirect, get_object_or_404, render
@@ -51,6 +53,10 @@ class UsuarioListView(LoginRequiredMixin, ListView):
     template_name = 'usuarios/lista_usuarios.html'
     context_object_name = 'usuarios'
 
+    def get_queryset(self):
+        queryset = super().get_queryset().filter(is_active=True)
+        return queryset.order_by('username')
+
 class UsuarioCreateView(LoginRequiredMixin, CreateView):
     model = CustomUser
     form_class = UsuarioForm
@@ -61,10 +67,19 @@ class UsuarioCreateView(LoginRequiredMixin, CreateView):
         response = super().form_valid(form)
         novo_usuario = form.instance
 
-        custom_group = Group.objects.get(name='Geral')
+        custom_group = Group.objects.get(name='padrao')
         custom_group.user_set.add(novo_usuario)
-
+    
         return response
+
+class UsuarioDesativaView(LoginRequiredMixin, View):
+    model = CustomUser
+
+    def get(self, request, pk):
+        objeto = get_object_or_404(self.model, pk=pk)
+        objeto.is_active = False
+        objeto.save()
+        return redirect(reverse('escolas:usuarios'))
 
 
 ### ESCOLAS

@@ -14,3 +14,7 @@ superuser:
 build:
 	sudo docker-compose up --build -d db
 	sudo docker-compose up --build -d backend
+
+# build:
+# 	sudo docker-compose up -d db
+# 	sudo docker-compose up -d backend
