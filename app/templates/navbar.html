@@ -25,27 +25,27 @@
         <div class="collapse navbar-collapse justify-content-end" id="mainNavbar">
             <ul class="navbar-nav ms-auto align-items-center">
                 {% if request.user.is_authenticated %}
-                    <li class="nav-item ms-5">
-                        <a class="btn btn-black btn-rounded" href="{% url 'escolas:usuario' request.user.id %}">Perfil</a>
+                    <li class="nav-item">
+                        <a class="btn custom-nav" href="{% url 'escolas:usuario' request.user.id %}">Perfil</a>
                     </li>       
                     <li class="nav-item">
-                        <a class="nav-link mx-2" href="{% url 'escolas:escolas' %}"><i class="fas fa-school mr-1"></i>Escolas</a>
+                        <a class="nav-link mx-1" href="{% url 'escolas:escolas' %}"></i>Escolas</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link mx-2" href="{% url 'escolas:alunos' %}"><i class="fas fa-graduation-cap mr-1"></i>Alunos</a>
+                        <a class="nav-link mx-1" href="{% url 'escolas:alunos' %}"></i>Alunos</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link mx-2" href="{% url 'escolas:atividades' %}"><i class="fas fa-calendar mr-1"></i>Atividades</a>
+                        <a class="nav-link mx-1" href="{% url 'escolas:atividades' %}"></i>Atividades</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link mx-2" href="{% url 'escolas:resultados' %}"><i class="fas fa-clipboard mr-1"></i>Resultados</a>
+                        <a class="nav-link mx-1" href="{% url 'escolas:resultados' %}"></i>Resultados</a>
                     </li>
-                    <li class="nav-item ms-3">
-                        <a class="btn btn-blue btn-rounded" href="{% url 'logout' %}">Sair</a>
+                    <li class="nav-item">
+                        <a class="btn custom-nav" href="{% url 'logout' %}">Sair</a>
                     </li>
                 {% else %}
-                    <li class="nav-item ms-3">
-                        <a class="btn btn-blue btn-rounded" href="{% url 'login' %}">Entrar</a>
+                    <li class="nav-item">
+                        <a class="btn custom-nav" href="{% url 'login' %}">Entrar</a>
                     </li>
                 {% endif %}
             </ul>

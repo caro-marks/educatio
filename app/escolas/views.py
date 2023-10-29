@@ -90,10 +90,6 @@ class UsuarioUpdateView(LoginRequiredMixin, UpdateView):
     def get_success_url(self):
         return reverse('escolas:usuario', args=[self.object.pk])
 
-    # def form_valid(self, form):
-    #     form.instance.operador = self.request.user
-    #     return super().form_valid(form)
-
 ### ESCOLAS
 class EscolasDetailView(LoginRequiredMixin, DetailView):
     model = Escola
@@ -254,9 +250,7 @@ class ParenteCreateView(LoginRequiredMixin, View):
         cria_parente_form = AdicionaParenteForm(request.POST)
         if cria_parente_form.is_valid():
             cleaned_form = cria_parente_form.cleaned_data
-            if parente := cleaned_form.pop('parente'):
-                print(f'parente presente: {parente}')
-            else:
+            if not (parente := cleaned_form.pop('parente')):
                 parente_data = {
                     'nome': cleaned_form.get('nome'),
                     'cpf': cleaned_form.get('cpf'),
@@ -535,10 +529,9 @@ class AlunosSemNotasListView(LoginRequiredMixin, ListView):
 
 class CriarNotaView(LoginRequiredMixin, View):
     def post(self, request, *args, **kwargs):
-        aluno_id = self.kwargs['aluno_id']
-        atividade_id = self.kwargs['atividade_id']
+        aluno_id = kwargs['aluno_id']
+        atividade_id = kwargs['atividade_id']
         form = AvaliarAtividadeForm(request.POST)
-        
         if form.is_valid():
             nota = form.cleaned_data['nota']
             operador = request.user
@@ -549,6 +542,7 @@ class CriarNotaView(LoginRequiredMixin, View):
                 operador=operador
             )
         
+        print(f'form invalid: {form}')
         redirect_url = reverse('escolas:alunos_sem_notas', kwargs={'atividade_id': atividade_id})
         return redirect(redirect_url)
     

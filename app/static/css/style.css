@@ -91,6 +91,14 @@ body {
   outline: none;
 }
 
-.navbar-light .navbar-nav .nav-link {
-  color: var(--color-darker);
+.nav-link {
+  text-decoration-line: underline;
+}
+
+.nav-link:hover {
+  text-decoration-line: none;
+}
+
+.custom-nav:hover {
+  text-decoration: underline;
 }

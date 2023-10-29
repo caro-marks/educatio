@@ -115,7 +115,9 @@ class EditaEscolaForm(forms.ModelForm):
         model = Escola
         exclude = ['operador', 'ativo']
         labels = {
-            'nome': 'Razão Social'
+            'nome': 'Razão Social',
+            'telefone_principal': 'Telefone',
+            'telefone_secundario': 'WhatsApp'
         }
         widgets = {
             'complemento': forms.Textarea(attrs={'rows': 2}),
@@ -385,7 +387,7 @@ class ListResultadosFilter(forms.Form):
 
 
 class AvaliarAtividadeForm(forms.Form):
-    nota = forms.DecimalField(label='Nota', max_digits=4, decimal_places=2, validators=[
+    nota = forms.DecimalField(label='Nota', help_text='Nota deve ser entre 0 e 10',max_digits=4, decimal_places=2, validators=[
         MinValueValidator(0, "Nota mínima é 0"),
         MaxValueValidator(10, "Nota máxima é 10")
     ])
