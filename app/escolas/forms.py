@@ -1,7 +1,7 @@
 from django import forms
 from django.core.exceptions import ValidationError
 from .enums import ESTADOS_BRASILEIROS, ParentescoChoices
-from .models import CustomUser, Escola, Aluno, Parente, Atividade
+from .models import CustomUser, Escola, Aluno, Parente, Atividade, Resultado
 from django.forms.widgets import DateInput
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Row, Column, ButtonHolder, Submit
@@ -42,7 +42,6 @@ class EditaUsuarioForm(forms.ModelForm):
 
     def save(self, commit=True):
         user = super().save(commit=False)
-        print(f'cleaned data: {self.cleaned_data}')
         user.set_password(self.cleaned_data["password"])
         if commit:
             user.save()
@@ -353,6 +352,14 @@ class EditaAtividadeForm(forms.ModelForm):
         widgets = {
             'data': DateInput(attrs={'type': 'date'}),
         }
+
+
+class EditaNotaForm(forms.ModelForm):
+
+    class Meta:
+        model = Resultado
+        fields = ['nota', 'observacoes']
+
 
 
 class ListResultadosFilter(forms.Form):

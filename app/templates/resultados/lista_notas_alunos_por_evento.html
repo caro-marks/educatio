@@ -11,6 +11,7 @@
             <tr>
                 <th>Aluno</th>
                 <th>Nota</th>
+                <th class="col-2">Ações</th>
             </tr>
         </thead>
         <tbody>
@@ -18,6 +19,13 @@
             <tr>
                 <td class="border-bottom">{{ resultado.aluno }}</td>
                 <td class="border-bottom">{{ resultado.nota }}</td>
+                <td class="text-center align-middle border-bottom">
+                    <div class="btn-group" role="group" aria-label="Acoes">                        
+                        <a href="{% url 'escolas:edita_resultado' resultado_id=resultado.id %}" class="btn custom-button">
+                            Editar nota
+                        </a>
+                    </div>
+                </td>
             </tr>
             {% endfor %}
         </tbody>

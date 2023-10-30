@@ -120,11 +120,13 @@ class Parentesco(models.Model):
 
 class Atividade(models.Model):
     descricao = models.CharField(max_length=100)
-    peso = models.PositiveSmallIntegerField(validators=[
-        MinValueValidator(1, "Peso deve ser no minimo 1"),
-        MaxValueValidator(100, "Peso deve ser no maximo 100"),
-    ],
-        help_text="Deve ser escrito em porcentagem (entre 1% e 100%)")
+    peso = models.PositiveSmallIntegerField(
+        validators=[
+            MinValueValidator(1, "Peso deve ser no minimo 1"),
+            MaxValueValidator(100, "Peso deve ser no maximo 100"),
+        ],        
+        help_text="Deve ser escrito em porcentagem (entre 1% e 100%)"
+    )
     data = models.DateField()
     escola = models.ForeignKey(Escola, on_delete=models.CASCADE)
 

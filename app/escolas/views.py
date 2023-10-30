@@ -27,6 +27,7 @@ from .forms import (
     
     ListResultadosFilter, 
     AvaliarAtividadeForm,
+    EditaNotaForm,
 
     SimpleDataFilter
 )
@@ -407,7 +408,6 @@ def get_notas(resultados):
         key=lambda media: (-media['resultado'], media['aluno']),
     )
 
-
 def get_resultados(escola_id, atividade_id, data_inicio, data_fim):
     titulo = 'Media' if not atividade_id else 'Resultado'
     
@@ -431,10 +431,15 @@ def get_resultados(escola_id, atividade_id, data_inicio, data_fim):
 
 class ExportarDadosNotas(LoginRequiredMixin, View):
     def get(self, request, *args, **kwargs):
-        escola_id = request.GET.get('escola')
-        atividade_id = request.GET.get('atividade')
-        data_inicio = request.GET.get('data_inicio')
-        data_fim = request.GET.get('data_fim')
+        escola_id = request.GET.get('escola', None) if request.GET.get('escola') != 'None' else 0
+        atividade_id = request.GET.get('atividade', None) if request.GET.get('atividade') != 'None' else 0
+        data_inicio = request.GET.get('data_inicio', None) if request.GET.get('data_inicio') != 'None' else 0
+        data_fim = request.GET.get('data_fim', None) if request.GET.get('data_fim') != 'None' else 0
+        print('\nExportarDadosNotas params')
+        print(f'escola_id: {escola_id}; type={type(escola_id)}')
+        print(f'atividade_id: {atividade_id}; type={type(atividade_id)}')
+        print(f'data_inicio: {data_inicio}; type={type(data_inicio)}')
+        print(f'data_fim: {data_fim}; type={type(data_fim)}\n')
 
         notas_evento, nota_field = get_resultados(
             escola_id, atividade_id, data_inicio, data_fim
@@ -469,10 +474,10 @@ class ListaResultadosView(LoginRequiredMixin, TemplateView):
         context = super().get_context_data(**kwargs)
         form = self.form_class(self.request.GET)
         context['form'] = form
-        escola_id = self.request.GET.get('escola')
-        atividade_id = self.request.GET.get('atividade')
-        data_inicio = self.request.GET.get('data_inicio')
-        data_fim = self.request.GET.get('data_fim')
+        escola_id = self.request.GET.get('escola', None)
+        atividade_id = self.request.GET.get('atividade', None)
+        data_inicio = self.request.GET.get('data_inicio', None)
+        data_fim = self.request.GET.get('data_fim', None)
         context['escola'] = escola_id
         context['atividade'] = atividade_id
         context['data_inicio'] = data_inicio
@@ -542,10 +547,18 @@ class CriarNotaView(LoginRequiredMixin, View):
                 operador=operador
             )
         
-        print(f'form invalid: {form}')
         redirect_url = reverse('escolas:alunos_sem_notas', kwargs={'atividade_id': atividade_id})
         return redirect(redirect_url)
-    
+
+class EditaNotaView(LoginRequiredMixin, UpdateView):
+    model = Resultado
+    form_class = EditaNotaForm
+    template_name = 'resultados/edita_resultado.html'
+    pk_url_kwarg = 'resultado_id'
+
+    def get_success_url(self):
+        return reverse('escolas:alunos_com_notas', args=[self.object.atividade.pk])
+
 class ListaNotasAlunosEventoView(LoginRequiredMixin, ListView):
     model = Resultado
     template_name = 'resultados/lista_notas_alunos_por_evento.html'

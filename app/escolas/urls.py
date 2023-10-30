@@ -42,6 +42,7 @@ from .views import (
     AlunosSemNotasListView,
     CriarNotaView,
     ListaNotasAlunosEventoView,
+    EditaNotaView,
 
     # export
     ExportarDadosNotas
@@ -57,22 +58,22 @@ urlpatterns = [
     path('usuarios/', UsuarioListView.as_view(), name='usuarios'),
     path('usuario/novo/', UsuarioCreateView.as_view(), name='cria_usuario'),
     path('usuario/<int:pk>/', UsuariosDetailView.as_view(), name='usuario'),
-    path('usuario/<int:pk>/desativa', UsuarioDesativaView.as_view(), name='desativa_usuario'),
-    path('usuario/<int:pk>/edita', UsuarioUpdateView.as_view(), name='edita_usuario'),
+    path('usuario/<int:pk>/desativa/', UsuarioDesativaView.as_view(), name='desativa_usuario'),
+    path('usuario/<int:pk>/edita/', UsuarioUpdateView.as_view(), name='edita_usuario'),
 
     # escola
     path('escolas/', EscolasListView.as_view(), name='escolas'),
     path('escola/nova/', EscolaCreateView.as_view(), name='cria_escola'),
     path('escola/<int:pk>/', EscolasDetailView.as_view(), name='escola'),
-    path('escola/<int:pk>/edita', EscolaUpdateView.as_view(), name='edita_escola'),
-    path('escola/<int:pk>/desativa', EscolaDesativaView.as_view(), name='desativa_escola'),
+    path('escola/<int:pk>/edita/', EscolaUpdateView.as_view(), name='edita_escola'),
+    path('escola/<int:pk>/desativa/', EscolaDesativaView.as_view(), name='desativa_escola'),
 
     # aluno
     path('alunos/', ListaAlunosView.as_view(), name='alunos'),
     path('aluno/novo/', AlunoCreateView.as_view(), name='cria_aluno'),
     path('aluno/<int:pk>/', DetalheAlunoView.as_view(), name='aluno'),
-    path('aluno/<int:pk>/edita', AlunoUpdateView.as_view(), name='edita_aluno'),
-    path('aluno/<int:pk>/desativa', AlunoDesativaView.as_view(), name='desativa_aluno'),
+    path('aluno/<int:pk>/edita/', AlunoUpdateView.as_view(), name='edita_aluno'),
+    path('aluno/<int:pk>/desativa/', AlunoDesativaView.as_view(), name='desativa_aluno'),
 
     # parente
     path('aluno/<int:aluno_id>/parente/novo/', ParenteCreateView.as_view(), name='cria_parente'),
@@ -89,9 +90,10 @@ urlpatterns = [
     # # nota evento
     path('resultados/', ListaResultadosView.as_view(), name='resultados'),
     path('resultados/aluno/<int:aluno_id>/', ListaResultadosAlunoView.as_view(), name='resultados_aluno'),
-    path('resultados/atividade/<int:atividade_id>/alunos_sem_notas', AlunosSemNotasListView.as_view(), name='alunos_sem_notas'),
+    path('resultados/atividade/<int:atividade_id>/alunos_sem_notas/', AlunosSemNotasListView.as_view(), name='alunos_sem_notas'),
     path('resultados/atividade/<int:atividade_id>/aluno/<int:aluno_id>/', CriarNotaView.as_view(), name='avaliar_aluno'),
-    path('resultados/atividade/<int:atividade_id>/alunos_com_notas', ListaNotasAlunosEventoView.as_view(), name='alunos_com_notas'),
+    path('resultados/atividade/<int:atividade_id>/alunos_com_notas/', ListaNotasAlunosEventoView.as_view(), name='alunos_com_notas'),
+    path('resultado/<int:resultado_id>/edita/', EditaNotaView.as_view(), name="edita_resultado"),
 
     # # dados
     path('exportar_dados_notas/', ExportarDadosNotas.as_view(), name='exportar_dados_notas')
