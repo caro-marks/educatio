@@ -7,7 +7,7 @@ from datetime import date
 # Create your models here.
 
 class CustomUser(AbstractUser):
-    cargo = models.CharField(max_length=50, null=True, blank=True)
+    cargo = models.CharField(max_length=50, blank=True)
 
     class Meta:
         swappable = 'AUTH_USER_MODEL'
@@ -21,7 +21,7 @@ class Escola(models.Model):
     cep = models.CharField(max_length=9)
     cidade = models.CharField(max_length=40)
     estado = models.CharField(max_length=2)
-    complemento = models.CharField(max_length=50, null=True, blank=True)
+    complemento = models.CharField(max_length=50, blank=True)
     diretor = models.CharField(max_length=50)
     telefone_principal = models.CharField(
         max_length=15, blank=True, null=True,
@@ -59,7 +59,7 @@ class Aluno(models.Model):
     complemento = models.CharField(max_length=100, blank=True, null=True)
     data_nascimento = models.DateField()
     estado_civil_pais = models.CharField(max_length=3, choices=EstadosCivis.choices(), blank=True, null=True)
-    cras = models.CharField(blank=True, null=True, max_length=30)
+    cras = models.CharField(blank=True, max_length=30)
     escola = models.ForeignKey(Escola, on_delete=models.CASCADE)
     periodo = models.CharField(max_length=3, choices=PeriodoEscola.choices(), blank=True, null=True)
     serie = models.CharField(max_length=3, choices=SerieEscolar.choices(), blank=True, null=True)

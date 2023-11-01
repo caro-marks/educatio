@@ -168,7 +168,8 @@ class ListaAlunosView(LoginRequiredMixin, TemplateView):
         context = super().get_context_data(**kwargs)
         context['form'] = self.form_class(self.request.GET)
         context['alunos'] = self.model.objects.filter(
-            ativo=True
+            ativo=True,
+            escola__ativo=True
         ).order_by('nome')
 
         if escola_id := self.request.GET.get('escola'):
@@ -201,6 +202,7 @@ class AlunoCreateView(LoginRequiredMixin, CreateView):
 
     def get_initial(self):
         initial = super().get_initial()
+        initial['ativo'] = True
         if escola_param := self.request.GET.get('escola', None):
             initial['escola'] = escola_param
         return initial
@@ -305,7 +307,7 @@ class ListaAtividadeView(LoginRequiredMixin, ListView):
     context_object_name = 'atividades'
 
     def get_queryset(self):
-        queryset = super().get_queryset()
+        queryset = super().get_queryset().filter(escola__ativo=True)
         if escola_id :=  self.request.GET.get('escola'):
             queryset = queryset.filter(escola_id=escola_id)        
         
@@ -395,6 +397,9 @@ def get_notas(resultados):
                 'detalhes': [
                     {
                         'nota_id': nota_evento.id,
+                        'raw_nota': nota_evento,
+                        'atividade': nota_evento.atividade,
+                        'peso': nota_evento.atividade.peso,
                         'nota': float(nota_evento.nota),
                         'data': nota_evento.atividade.data.strftime("%d/%m/%Y")
 
@@ -409,21 +414,21 @@ def get_notas(resultados):
     )
 
 def get_resultados(escola_id, atividade_id, data_inicio, data_fim):
-    titulo = 'Media' if not atividade_id else 'Resultado'
-    
     if escola_id:
         resultados = Resultado.objects.filter(atividade__escola_id=escola_id)
         if atividade_id:
             resultados = resultados.filter(atividade_id=atividade_id)
     elif atividade_id:
-        resultados = Resultado.objects.filter(atividade_id=atividade_id)
+        resultados = Resultado.objects.filter(atividade__escola__ativo=True, atividade_id=atividade_id)
     else:
-        resultados = Resultado.objects.all()
+        resultados = Resultado.objects.filter(atividade__escola__ativo=True)
 
     if data_inicio:
         resultados = resultados.filter(atividade__data__gte=data_inicio)
     if data_fim:
         resultados = resultados.filter(atividade__data__lte=data_fim)
+    
+    titulo = 'Media' if resultados.values('atividade').distinct().count() != 1 else 'Resultado'
     
     notas = get_notas(resultados)
 
@@ -435,11 +440,6 @@ class ExportarDadosNotas(LoginRequiredMixin, View):
         atividade_id = request.GET.get('atividade', None) if request.GET.get('atividade') != 'None' else 0
         data_inicio = request.GET.get('data_inicio', None) if request.GET.get('data_inicio') != 'None' else 0
         data_fim = request.GET.get('data_fim', None) if request.GET.get('data_fim') != 'None' else 0
-        print('\nExportarDadosNotas params')
-        print(f'escola_id: {escola_id}; type={type(escola_id)}')
-        print(f'atividade_id: {atividade_id}; type={type(atividade_id)}')
-        print(f'data_inicio: {data_inicio}; type={type(data_inicio)}')
-        print(f'data_fim: {data_fim}; type={type(data_fim)}\n')
 
         notas_evento, nota_field = get_resultados(
             escola_id, atividade_id, data_inicio, data_fim
@@ -538,14 +538,15 @@ class CriarNotaView(LoginRequiredMixin, View):
         atividade_id = kwargs['atividade_id']
         form = AvaliarAtividadeForm(request.POST)
         if form.is_valid():
-            nota = form.cleaned_data['nota']
+            nota = form.cleaned_data.get('nota')
             operador = request.user
-            Resultado.objects.create(
+            new_result = Resultado.objects.create(
                 aluno_id=aluno_id,
                 atividade_id=atividade_id, 
                 nota=nota,
                 operador=operador
             )
+            new_result.save()
         
         redirect_url = reverse('escolas:alunos_sem_notas', kwargs={'atividade_id': atividade_id})
         return redirect(redirect_url)

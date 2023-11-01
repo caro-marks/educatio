@@ -20,9 +20,13 @@
             {% crispy form %}
         </form>
     </div>
-
-    <h3>Resultados por Atividade</h3>
-    <table id="resultados" class="table table-striped table-bordeless mt-3" style="width:100%">
+    
+    {% if titulo == 'Media' %}
+        <h3>Media de Resultados por Aluno</h3>
+    {% else %}
+        <h3>Resultados por Aluno</h3>
+    {% endif %}
+        <table id="resultados" class="table table-striped table-bordeless mt-3" style="width:100%">
         <thead>                
             <tr>
                 <th>Aluno</th>

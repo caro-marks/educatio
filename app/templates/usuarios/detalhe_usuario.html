@@ -15,7 +15,7 @@
     <div class="card-footer">
         <div class="row justify-content-end">
             <a href="{% url 'escolas:edita_usuario' usuario.id %}" class="btn btn-secondary mx-1">
-                Edita
+                Editar
             </a>
             {% if request.user.is_superuser %}
             {% if not usuario.is_superuser %}
