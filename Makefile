@@ -11,10 +11,8 @@ migrate:
 superuser:
 	sudo docker-compose run backend python manage.py createsuperuser
 
-build:
-	sudo docker-compose up --build -d db
-	sudo docker-compose up --build -d backend
+group:
+	sudo docker-compose run backend python manage.py insert_group
 
-# build:
-# 	sudo docker-compose up -d db
-# 	sudo docker-compose up -d backend
+build:
+	sudo docker-compose up --build
