@@ -26,21 +26,6 @@
             <ul class="navbar-nav ms-auto align-items-center">
                 {% if request.user.is_authenticated %}
                     <li class="nav-item">
-                        <a class="btn custom-nav" href="{% url 'escolas:usuario' request.user.id %}">Perfil</a>
-                    </li>       
-                    <li class="nav-item">
-                        <a class="nav-link mx-1" href="{% url 'escolas:escolas' %}"></i>Escolas</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link mx-1" href="{% url 'escolas:alunos' %}"></i>Alunos</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link mx-1" href="{% url 'escolas:atividades' %}"></i>Atividades</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link mx-1" href="{% url 'escolas:resultados' %}"></i>Resultados</a>
-                    </li>
-                    <li class="nav-item">
                         <a class="btn custom-nav" href="{% url 'logout' %}">Sair</a>
                     </li>
                 {% else %}
