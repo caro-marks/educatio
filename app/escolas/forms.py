@@ -229,7 +229,7 @@ class EditaAlunoForm(forms.ModelForm):
     data_nascimento = forms.DateField(required=False)
     class Meta:
         model = Aluno
-        exclude = ['operador', 'familia']
+        exclude = ['operador', 'familia', 'ativo']
         labels = {
             'estado_civil_pais': 'Estado civil dos pais',
             'info_adicionais': 'Informações adicionais'
