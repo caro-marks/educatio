@@ -53,7 +53,7 @@
             <tbody>
                 {% for parentesco in aluno.parentescos.all %}
                     <tr>
-                        <td class="border-bottom">{{ parentesco.parente.nome }}</td>
+                        <td class="border-bottom">{{ parentesco.parente.nome.title }}</td>
                         <td class="border-bottom">{{ parentesco.get_grau_parentesco_display }}</td>
                         <td class="border-bottom">
                             {% if parentesco.principal_responsavel %}
