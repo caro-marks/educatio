@@ -163,7 +163,7 @@ class CriaAlunoForm(forms.ModelForm):
     escola = forms.ModelChoiceField(
         queryset=Escola.objects.filter(ativo=True),
         empty_label="--",
-        required=False
+        required=True
     )
     class Meta:
         model = Aluno

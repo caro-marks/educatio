@@ -30,19 +30,19 @@ class Escola(models.Model):
         ]
     )
     telefone_secundario = models.CharField(
-        max_length=15, blank=True, null=True,
+        max_length=15, blank=True,
         validators=[
             MinLengthValidator(13, 'Número de telefone deve ter no mínimo 10 dígitos'),
         ]
     )
-    email = models.EmailField(blank=True, null=True)
+    email = models.EmailField(blank=True)
     ativo = models.BooleanField(default=True)
     criado_em = models.DateTimeField(auto_now_add=True)
     atualizado_em = models.DateTimeField(auto_now=True)
     operador = models.ForeignKey(CustomUser, null=True, blank=True, on_delete=models.CASCADE)
     
     def get_endereco_junto_display(self):
-        return f'{self.endereco}, {self.bairro} - {self.cidade}/{self.estado}'
+        return f'{self.endereco}, {self.bairro} - {self.cidade}/{self.estado}'.title()
 
     def __str__(self):
         return self.nome
@@ -56,7 +56,7 @@ class Aluno(models.Model):
     cep = models.CharField(max_length=9, blank=True)
     cidade = models.CharField(max_length=40)
     estado = models.CharField(max_length=2)
-    complemento = models.CharField(max_length=100, blank=True, null=True)
+    complemento = models.CharField(max_length=100, blank=True)
     data_nascimento = models.DateField()
     estado_civil_pais = models.CharField(max_length=3, choices=EstadosCivis.choices(), blank=True, null=True)
     cras = models.CharField(blank=True, max_length=30)
@@ -78,10 +78,10 @@ class Aluno(models.Model):
         return f"{serie} - {periodo}"
     
     def get_endereco_junto_display(self):
-        return f'{self.endereco}, {self.bairro} - {self.cidade}/{self.estado}'
+        return f'{self.endereco}, {self.bairro} - {self.cidade}/{self.estado}'.title()
     
     def get_estado_civil_pais_display(self):
-        return f'{dict(EstadosCivis.choices()).get(self.estado_civil_pais)}'
+        return f'{dict(EstadosCivis.choices()).get(self.estado_civil_pais, "Não informado")}'
 
     def __str__(self):
         return self.nome
@@ -99,7 +99,9 @@ class Parente(models.Model):
     operador = models.ForeignKey(CustomUser, null=True, blank=True, on_delete=models.CASCADE)
 
     def get_idade_atual_display(self):
-        return f'{self.idade + (date.today().year - self.criado_em.year)}'
+        if self.idade:
+            return f'{self.idade + (date.today().year - self.criado_em.year)}'
+        return 'Não informado'
 
     def __str__(self):
         return self.nome
